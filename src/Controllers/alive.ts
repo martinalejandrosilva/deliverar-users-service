@@ -4,15 +4,14 @@ interface IAliveResponse {
   message : string;
 }
 
-
-@Route("ping")
+@Route("api/alive")
 @Tags('API Health')
-/**
- * Check if the server is alive.
- * @returns {Promise<IAliveResponse>} The alive message.
- */
-export default class AliveController {
-  @Get("/")
+export default class AliveController {  
+  /**
+   * Get API Health Status.
+   * @returns A message with the API health status.
+   */
+    @Get("/")
   public async alive () : Promise<IAliveResponse> {
     return {
       message: 'I am alive!'

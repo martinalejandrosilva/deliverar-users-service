@@ -31,12 +31,12 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/ping": {
+		"/api/alive": {
 			"get": {
 				"operationId": "Alive",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "A message with the API health status.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -46,6 +46,7 @@
 						}
 					}
 				},
+				"description": "Get API Health Status.",
 				"tags": [
 					"API Health"
 				],
