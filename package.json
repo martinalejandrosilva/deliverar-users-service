@@ -33,7 +33,9 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "config": "^3.3.9",
     "express": "^4.18.2",
+    "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
