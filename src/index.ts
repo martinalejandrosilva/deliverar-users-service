@@ -2,11 +2,15 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import router from "./Routes";
 import swaggerUi from "swagger-ui-express";
+import { connectDB } from "./config/dbConnection";
 
 
 const PORT = process.env.PORT ?? 8000;
 
 const app: Application = express();
+
+//Connect to Database.
+connectDB();
 
 app.use(express.json());
 app.use(morgan("tiny"));
