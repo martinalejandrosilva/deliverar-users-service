@@ -1,0 +1,4 @@
+{
+  "jwtSecret" : "this_Should_be_a_super_long_and_secret_key", 
+  "mongoConnString" : "mongodb+srv://dbuser:jmZ09DHFXArzA7A6@uade-deliverar-users.ufhkfq0.mongodb.net/"
+}
