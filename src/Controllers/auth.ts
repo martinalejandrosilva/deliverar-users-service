@@ -1,4 +1,4 @@
-import { Body, Post, Route, Tags } from "tsoa";
+import { Body, Path, Post, Route, Tags } from "tsoa";
 import { IUserAuthenticate } from "../Services/AuthService";
 const AuthService = require("../Services/AuthService");
 const config = require("config");
@@ -39,8 +39,20 @@ export default class AuthController {
           }
         );
       });
-      return {code: user.code, token : token};
+      return { code: user.code, token: token };
     }
+    return { code: user.code, message: user.message };
+  }
+
+  /**
+   * Initiates User Password Recovery Process.
+   * @param email The user email.
+   */
+  @Post("/password-recovery/:email")
+  public async recovery(
+    @Path("email") email: string
+  ): Promise<AuthenticatedResponse> {
+    const user = await AuthService.RecoverPassword(email);
     return { code: user.code, message: user.message };
   }
 }

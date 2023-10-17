@@ -1,0 +1,10 @@
+{
+  "service": "gmail",
+  "auth": {
+    "type": "OAuth2",
+    "user": "uadedeliverargrupo04@gmail.com",
+    "clientId": "647098315366-r86pqh99c3qmhp4b6fc64bnfq407dpk6.apps.googleusercontent.com",
+    "clientSecret": "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",
+    "refreshToken": "1//04UJ4tvkTsB0XCgYIARAAGAQSNwF-L9IrGaLchheGj4T7SaHV19pB6-TnHauCRETcJef6vYWCSpEfMxsHO51VwWV0x-4vjlZGBEU"
+  }
+}

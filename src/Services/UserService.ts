@@ -1,7 +1,6 @@
 import { IUserRegister } from "../Models/types";
 import User from "../Models/user.model";
-const bcrypt = require('bcrypt');
-
+const bcrypt = require("bcrypt");
 
 exports.Register = async ({ name, email, password }: IUserRegister) => {
   try {
@@ -17,10 +16,13 @@ exports.Register = async ({ name, email, password }: IUserRegister) => {
 
     await NewUser.save();
 
-    return { code: 200, payload: {
-      name: NewUser.name,
-      email: NewUser.email,
-    } };
+    return {
+      code: 200,
+      payload: {
+        name: NewUser.name,
+        email: NewUser.email,
+      },
+    };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }
