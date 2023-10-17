@@ -26,6 +26,9 @@
 					},
 					"payload": {
 						"properties": {
+							"isProvider": {
+								"type": "boolean"
+							},
 							"email": {
 								"type": "string"
 							},
@@ -37,6 +40,7 @@
 							}
 						},
 						"required": [
+							"isProvider",
 							"email",
 							"name",
 							"token"
@@ -60,12 +64,16 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"isProvider": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"name",
 					"email",
-					"password"
+					"password",
+					"isProvider"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -204,6 +212,39 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/auth/password-recovery/{email}": {
+			"post": {
+				"operationId": "Recovery",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthenticatedResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Initiates User Password Recovery Process.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The user email.",
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},
