@@ -1,4 +1,4 @@
-import { Body, Delete, Path, Post, Put, Route, Tags } from "tsoa";
+import { Body, Delete, Path, Post, Put, Route, Security, Tags } from "tsoa";
 import { IUserProfileUpdate, IUserRegister } from "../Models/types";
 const UserService = require("../Services/UserService");
 const config = require("config");
@@ -66,6 +66,7 @@ export default class UserController {
    * @returns The user data.
    */
   @Put("/")
+  @Security("BearerAuth")
   public async update(
     @Body() { email, name, password, profilePicture }: IUserProfileUpdate
   ): Promise<IUserResponse> {
@@ -100,6 +101,7 @@ export default class UserController {
    * @param email The user email.
    */
   @Delete("/:email")
+  @Security("BearerAuth")
   public async delete(@Path("email") email: string): Promise<IUserResponse> {
     const user = await UserService.DeleteUser(email);
     return { code: user.code };

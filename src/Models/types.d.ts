@@ -30,3 +30,11 @@ export interface IUserProfileUpdate {
   password?: string;
   profilePicture?: string;
 }
+
+export interface IUserAuthenticated {
+  email: string;
+  password: string;
+  profilePicture?: string;
+  isProvider: boolean;
+  createdOn?: Date;
+}

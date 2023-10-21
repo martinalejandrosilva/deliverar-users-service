@@ -32,6 +32,7 @@ exports.Register = async ({
         name: NewUser.name,
         email: NewUser.email,
         isProvider: NewUser.isProvider,
+        createdOn: NewUser.createdOn,
       },
     };
   } catch (error) {

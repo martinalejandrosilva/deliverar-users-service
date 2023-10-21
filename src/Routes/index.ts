@@ -3,6 +3,7 @@ import AliveController from "../Controllers/alive";
 import UserController from "../Controllers/user";
 import AuthController from "../Controllers/auth";
 import { validationResult } from "express-validator";
+import authMiddleware from "../Middleware/authMiddleware";
 const router = express.Router();
 const {
   validateRegister,
@@ -32,7 +33,7 @@ router.post("/api/user", validateRegister, (_req, res) => {
     });
 });
 
-router.put("/api/user", (_req, res) => {
+router.put("/api/user", authMiddleware, (_req, res) => {
   const errors = validationResult(_req);
   if (!errors.isEmpty()) {
     return res.status(404).json({ errors: errors.array() });
@@ -62,7 +63,7 @@ router.post("/api/auth/password-recovery/:email", (_req, res) => {
   });
 });
 
-router.delete("/api/user/:email", (_req, res) => {
+router.delete("/api/user/:email", authMiddleware, (_req, res) => {
   const controller = new UserController();
   const email = _req.params.email;
   controller.delete(email).then((response) => {
