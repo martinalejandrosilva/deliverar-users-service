@@ -3,10 +3,12 @@ import morgan from "morgan";
 import router from "./Routes";
 import swaggerUi from "swagger-ui-express";
 import { connectDB } from "./config/dbConnection";
+const cors = require("cors");
 
 const PORT = process.env.PORT ?? 8000;
 
 const app: Application = express();
+app.use(cors());
 
 //Connect to Database.
 connectDB();
@@ -22,7 +24,7 @@ app.use(
     swaggerOptions: {
       url: "/swagger.json",
     },
-  }),
+  })
 );
 
 app.use(router);
