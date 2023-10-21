@@ -1,4 +1,4 @@
-import { Body, Post, Route, Tags } from "tsoa";
+import { Body, Patch, Post, Route, Tags } from "tsoa";
 import { IUserRegister } from "../Models/types";
 const UserService = require("../Services/UserService");
 const config = require("config");
@@ -27,7 +27,7 @@ export default class UserController {
    */
   @Post("/")
   public async register(
-    @Body() { name, email, password, isProvider }: IUserRegister,
+    @Body() { name, email, password, isProvider }: IUserRegister
   ): Promise<IUserResponse> {
     const user = await UserService.Register({
       name,
@@ -47,11 +47,14 @@ export default class UserController {
             } else {
               resolve(token);
             }
-          },
+          }
         );
       });
       user.payload.token = token;
     }
     return { code: user.code, payload: user.payload };
   }
+
+  @Patch("/")
+  public async updateProfile() {}
 }

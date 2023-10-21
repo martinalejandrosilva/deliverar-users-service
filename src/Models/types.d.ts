@@ -2,7 +2,7 @@ export interface IUserRegister {
   name: string;
   email: string;
   password: string;
-  isProvider: string;
+  isProvider: boolean;
 }
 
 export interface IUser {
@@ -10,6 +10,7 @@ export interface IUser {
   lastName: string;
   email: string;
   password: string;
+  isProvider: boolean;
   dateOfBirth?: Date;
   address?: IUserAddress;
   phone?: string;
@@ -20,4 +21,11 @@ export interface IUserAddress {
   street: string;
   number: number;
   city: string;
+}
+
+export interface IUserProfileUpdate {
+  email: string;
+  name?: string;
+  password?: string;
+  profilePicture?: string;
 }

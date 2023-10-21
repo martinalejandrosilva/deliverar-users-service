@@ -66,7 +66,7 @@
 						"type": "string"
 					},
 					"isProvider": {
-						"type": "string"
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -179,6 +179,19 @@
 						}
 					}
 				}
+			},
+			"patch": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/auth/login": {
