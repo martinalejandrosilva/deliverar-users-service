@@ -35,7 +35,6 @@ exports.Register = async ({
       },
     };
   } catch (error) {
-    console.log(error);
     return { code: 500, message: "Internal Server Error" };
   }
 };
@@ -77,6 +76,15 @@ exports.UpdateUser = async ({
         profilePicture: user?.profilePicture,
       },
     };
+  } catch (error) {
+    return { code: 500, message: "Internal Server Error" };
+  }
+};
+
+exports.DeleteUser = async (email: string) => {
+  try {
+    let user = await User.deleteOne({ email }).lean();
+    return { code: 200, message: "User Deleted" };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }

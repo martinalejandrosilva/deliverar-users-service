@@ -1,4 +1,4 @@
-import { Body, Post, Put, Route, Tags } from "tsoa";
+import { Body, Delete, Path, Post, Put, Route, Tags } from "tsoa";
 import { IUserProfileUpdate, IUserRegister } from "../Models/types";
 const UserService = require("../Services/UserService");
 const config = require("config");
@@ -93,5 +93,15 @@ export default class UserController {
       user.payload.token = token;
     }
     return { code: user.code, payload: user.payload };
+  }
+
+  /**
+   * Deletes User Account.
+   * @param email The user email.
+   */
+  @Delete("/:email")
+  public async delete(@Path("email") email: string): Promise<IUserResponse> {
+    const user = await UserService.DeleteUser(email);
+    return { code: user.code };
   }
 }

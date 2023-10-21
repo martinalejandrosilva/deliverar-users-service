@@ -61,8 +61,6 @@ export const sendMail = async (
       subject: subject,
       html: html,
     };
-    // Logging commented out for security reasons
-    // console.log("EMAIL! ", mailOptions);
     await transporter.sendMail(mailOptions);
   } catch (error) {
     console.error("Error sending email:", error);

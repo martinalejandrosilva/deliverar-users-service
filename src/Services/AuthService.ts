@@ -74,7 +74,6 @@ exports.RecoverPassword = async (
       message: "Se enviara un correo con la nueva contraseña",
     };
   } catch (err) {
-    console.log(err);
     return { message: "Ha Ocurrido un Error", code: 500 };
   }
 };

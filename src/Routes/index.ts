@@ -55,11 +55,19 @@ router.post("/api/auth/login", validateLogin, (_req, res) => {
 });
 
 router.post("/api/auth/password-recovery/:email", (_req, res) => {
-  console.log("Email: ", _req.params.email);
   const controller = new AuthController();
   const email = _req.params.email;
   controller.recovery(email).then((response) => {
     res.status(response.code).send(response);
   });
 });
+
+router.delete("/api/user/:email", (_req, res) => {
+  const controller = new UserController();
+  const email = _req.params.email;
+  controller.delete(email).then((response) => {
+    res.status(response.code).send(response);
+  });
+});
+
 export default router;
