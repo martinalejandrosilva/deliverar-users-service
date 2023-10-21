@@ -26,6 +26,9 @@
 					},
 					"payload": {
 						"properties": {
+							"profilePicture": {
+								"type": "string"
+							},
 							"isProvider": {
 								"type": "boolean"
 							},
@@ -74,6 +77,27 @@
 					"email",
 					"password",
 					"isProvider"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUserProfileUpdate": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"profilePicture": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -180,18 +204,36 @@
 					}
 				}
 			},
-			"patch": {
-				"operationId": "UpdateProfile",
+			"put": {
+				"operationId": "Update",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "The user data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUserResponse"
+								}
+							}
+						}
 					}
 				},
+				"description": "Update a new user.",
 				"tags": [
 					"User"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUserProfileUpdate"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/auth/login": {

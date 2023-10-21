@@ -32,6 +32,20 @@ router.post("/api/user", validateRegister, (_req, res) => {
     });
 });
 
+router.put("/api/user", (_req, res) => {
+  const errors = validationResult(_req);
+  if (!errors.isEmpty()) {
+    return res.status(404).json({ errors: errors.array() });
+  }
+  const controller = new UserController();
+  const { email, name, password, profilePicture } = _req.body;
+  controller
+    .update({ email, name, password, profilePicture })
+    .then((response) => {
+      res.status(response.code).send(response.payload);
+    });
+});
+
 router.post("/api/auth/login", validateLogin, (_req, res) => {
   const controller = new AuthController();
   const { email, password } = _req.body;

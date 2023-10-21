@@ -12,6 +12,7 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   isProvider: { type: Boolean, required: true },
+  createdOn: { type: Date, default: Date.now },
   dateOfBirth: { type: Date, required: false },
   address: { type: userAddressSchema, required: false },
   phone: { type: String, required: false },

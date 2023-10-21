@@ -11,6 +11,7 @@ export interface IUser {
   email: string;
   password: string;
   isProvider: boolean;
+  createdOn?: Date;
   dateOfBirth?: Date;
   address?: IUserAddress;
   phone?: string;

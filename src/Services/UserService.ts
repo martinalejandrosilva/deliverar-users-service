@@ -15,7 +15,12 @@ exports.Register = async ({
       return { code: 400, message: "User already exists" };
     }
 
-    const NewUser = new User({ name, email, isProvider });
+    const NewUser = new User({
+      name,
+      email,
+      isProvider,
+      createdOn: Date.now(),
+    });
     const salt = await bcrypt.genSalt(10);
     NewUser.password = await bcrypt.hash(password, salt);
 
