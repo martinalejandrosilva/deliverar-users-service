@@ -28,7 +28,6 @@ export interface IUserProfileUpdate {
   email: string;
   name?: string;
   password?: string;
-  profilePicture?: string;
 }
 
 export interface IUserAuthenticated {

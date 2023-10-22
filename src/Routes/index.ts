@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import AliveController from "../Controllers/alive";
 import UserController from "../Controllers/user";
 import AuthController from "../Controllers/auth";
@@ -9,6 +10,8 @@ const {
   validateRegister,
   validateLogin,
 } = require("../Validation/userValidation");
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/api/alive", (_req, res) => {
   const controller = new AliveController();
@@ -39,13 +42,38 @@ router.put("/api/user", authMiddleware, (_req, res) => {
     return res.status(404).json({ errors: errors.array() });
   }
   const controller = new UserController();
-  const { email, name, password, profilePicture } = _req.body;
-  controller
-    .update({ email, name, password, profilePicture })
-    .then((response) => {
-      res.status(response.code).send(response.payload);
-    });
+  const { email, name, password } = _req.body;
+
+  controller.update({ email, name, password }).then((response) => {
+    res.status(response.code).send(response.payload);
+  });
 });
+
+router.put(
+  "/api/user/profilePicture/:email",
+  authMiddleware,
+  upload.single("profilePicture"),
+  (_req, res) => {
+    const controller = new UserController();
+    const email = _req.params.email;
+    const profilePicture = _req.file;
+
+    if (!profilePicture) {
+      return res.status(400).json({ message: "Profile picture is required." });
+    }
+
+    controller
+      .UpdateProfilePicture(email, profilePicture)
+      .then((response) => {
+        res.status(response.code).json(response.payload);
+      })
+      .catch((error) => {
+        res
+          .status(500)
+          .json({ message: "Internal Server Error", error: error.message });
+      });
+  }
+);
 
 router.post("/api/auth/login", validateLogin, (_req, res) => {
   const controller = new AuthController();

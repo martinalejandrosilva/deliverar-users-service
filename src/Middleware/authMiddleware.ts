@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+const config = require("config");
 
 interface UserPayload {
   id: string;
@@ -21,12 +22,10 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });
   }
-
+  const jwtSecret = config.get("jwtSecret");
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as UserPayload;
+    const actualToken = token.split(" ")[1]; // Splitting by space and taking the second part
+    const decoded = jwt.verify(actualToken, jwtSecret) as UserPayload;
     req.user = decoded;
     next();
   } catch (err) {

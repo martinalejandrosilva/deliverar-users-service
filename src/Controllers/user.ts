@@ -1,4 +1,14 @@
-import { Body, Delete, Path, Post, Put, Route, Security, Tags } from "tsoa";
+import {
+  Body,
+  Delete,
+  Path,
+  Post,
+  Put,
+  Route,
+  Security,
+  Tags,
+  UploadedFile,
+} from "tsoa";
 import { IUserProfileUpdate, IUserRegister } from "../Models/types";
 const UserService = require("../Services/UserService");
 const config = require("config");
@@ -68,13 +78,12 @@ export default class UserController {
   @Put("/")
   @Security("BearerAuth")
   public async update(
-    @Body() { email, name, password, profilePicture }: IUserProfileUpdate
+    @Body() { email, name, password }: IUserProfileUpdate
   ): Promise<IUserResponse> {
     const user = await UserService.UpdateUser({
       email,
       name,
       password,
-      profilePicture,
     });
     if (user.code === 200) {
       const token = await new Promise<string | undefined>((resolve, reject) => {
@@ -94,6 +103,24 @@ export default class UserController {
       user.payload.token = token;
     }
     return { code: user.code, payload: user.payload };
+  }
+
+  @Put("/profilePicture/:email")
+  @Security("BearerAuth")
+  public async UpdateProfilePicture(
+    @Path() email: string,
+    @UploadedFile("profilePicture") profilePicture: Express.Multer.File
+  ): Promise<IUserResponse> {
+    if (!profilePicture) {
+      return { code: 400 };
+    }
+
+    const userResponse = await UserService.updateUserProfilePicture(
+      email,
+      profilePicture.buffer
+    );
+
+    return userResponse; // Assuming the service returns an object of IUserResponse type
   }
 
   /**
