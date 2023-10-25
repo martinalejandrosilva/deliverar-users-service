@@ -1,4 +1,4 @@
-import { Body, Path, Post, Route, Security, Tags } from "tsoa";
+import { Body, Path, Post, Route, Tags } from "tsoa";
 import { IUserAuthenticate } from "../Services/AuthService";
 import { IUserAuthenticated } from "../Models/types";
 const AuthService = require("../Services/AuthService");
