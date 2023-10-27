@@ -4,6 +4,9 @@ import router from "./Routes";
 import swaggerUi from "swagger-ui-express";
 import { connectDB } from "./config/dbConnection";
 const cors = require("cors");
+import session from "express-session";
+import passport from "passport";
+import "./Services/passportSetup";
 
 const PORT = process.env.PORT ?? 8000;
 
@@ -26,6 +29,17 @@ app.use(
     },
   })
 );
+
+app.use(
+  session({
+    secret: "random_secret_key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(router);
 

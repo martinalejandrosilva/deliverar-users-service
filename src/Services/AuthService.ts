@@ -1,4 +1,4 @@
-import { IUser } from "../Models/types";
+import { GoogleProfile, IUser } from "../Models/types";
 import User from "../Models/user.model";
 import { sendMail } from "./EmailService";
 const bcrypt = require("bcrypt");
@@ -73,6 +73,28 @@ exports.RecoverPassword = async (
       code: 200,
       message: "Se enviara un correo con la nueva contraseña",
     };
+  } catch (err) {
+    return { message: "Ha Ocurrido un Error", code: 500 };
+  }
+};
+
+exports.RegisterOrLoginGoogleUser = async (profile: GoogleProfile) => {
+  try {
+    let user = await User.findOne({ email: profile.emails[0].value }).lean();
+
+    // If user doesn't exist, create a new one
+    if (!user) {
+      const newUser = new User({
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        authMethods: ["google"],
+        isProvider: false,
+        createdOn: Date.now,
+      });
+      await newUser.save();
+    }
+
+    return { code: 200, user: user };
   } catch (err) {
     return { message: "Ha Ocurrido un Error", code: 500 };
   }

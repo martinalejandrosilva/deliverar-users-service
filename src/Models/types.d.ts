@@ -37,3 +37,8 @@ export interface IUserAuthenticated {
   isProvider: boolean;
   createdOn?: Date;
 }
+
+interface GoogleProfile {
+  displayName: string;
+  emails: { value: string }[];
+}

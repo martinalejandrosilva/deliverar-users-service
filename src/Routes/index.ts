@@ -5,6 +5,7 @@ import UserController from "../Controllers/user";
 import AuthController from "../Controllers/auth";
 import { validationResult } from "express-validator";
 import authMiddleware from "../Middleware/authMiddleware";
+import passport from "passport";
 const router = express.Router();
 const {
   validateRegister,
@@ -98,5 +99,18 @@ router.delete("/api/user/:email", authMiddleware, (_req, res) => {
     res.status(response.code).send(response);
   });
 });
+
+router.get(
+  "/api/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/api/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/success-url");
+  }
+);
 
 export default router;
