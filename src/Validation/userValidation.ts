@@ -16,7 +16,7 @@ exports.validateRegister = [
     .withMessage("Password is required")
     .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
     .withMessage(
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     ),
 
   body("name").exists().withMessage("Name is required"),

@@ -26,6 +26,9 @@
 					},
 					"payload": {
 						"properties": {
+							"profilePicture": {
+								"type": "string"
+							},
 							"isProvider": {
 								"type": "boolean"
 							},
@@ -66,7 +69,7 @@
 						"type": "string"
 					},
 					"isProvider": {
-						"type": "string"
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -78,10 +81,58 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IUserProfileUpdate": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUserAuthenticated": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"profilePicture": {
+						"type": "string"
+					},
+					"isProvider": {
+						"type": "boolean"
+					},
+					"createdOn": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"isProvider"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthenticatedResponse": {
 				"properties": {
 					"message": {
 						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/IUserAuthenticated"
 					},
 					"token": {
 						"type": "string"
@@ -113,7 +164,14 @@
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"BearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT",
+				"description": "Enter JWT Bearer token **_without_** the 'Bearer ' prefix"
+			}
+		}
 	},
 	"info": {
 		"title": "deliverar-users-service",
@@ -179,6 +237,132 @@
 						}
 					}
 				}
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "The user data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUserResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a new user.",
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUserProfileUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/user/profilePicture/{email}": {
+			"put": {
+				"operationId": "UpdateProfilePicture",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUserResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"profilePicture": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"profilePicture"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/user/{email}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUserResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes User Account.",
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The user email.",
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/auth/login": {

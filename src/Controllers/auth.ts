@@ -1,5 +1,6 @@
 import { Body, Path, Post, Route, Tags } from "tsoa";
 import { IUserAuthenticate } from "../Services/AuthService";
+import { IUserAuthenticated } from "../Models/types";
 const AuthService = require("../Services/AuthService");
 const config = require("config");
 const jwt = require("jsonwebtoken");
@@ -7,6 +8,7 @@ const jwt = require("jsonwebtoken");
 export type AuthenticatedResponse = {
   code: number;
   token?: string;
+  user?: IUserAuthenticated;
   message?: string;
 };
 
@@ -39,7 +41,7 @@ export default class AuthController {
           }
         );
       });
-      return { code: user.code, token: token };
+      return { code: user.code, token: token, user: user.user };
     }
     return { code: user.code, message: user.message };
   }

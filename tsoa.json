@@ -3,6 +3,14 @@
   "noImplicitAdditionalProperties": "throw-on-extras",
   "spec": {
     "outputDirectory": "public",
-    "specVersion": 3
+    "specVersion": 3,
+    "securityDefinitions": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter JWT Bearer token **_without_** the 'Bearer ' prefix"
+      }
+    }
   }
 }

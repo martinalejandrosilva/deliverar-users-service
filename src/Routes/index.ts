@@ -1,13 +1,18 @@
 import express from "express";
+import multer from "multer";
 import AliveController from "../Controllers/alive";
 import UserController from "../Controllers/user";
 import AuthController from "../Controllers/auth";
 import { validationResult } from "express-validator";
+import authMiddleware from "../Middleware/authMiddleware";
+import passport from "passport";
 const router = express.Router();
 const {
   validateRegister,
   validateLogin,
 } = require("../Validation/userValidation");
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/api/alive", (_req, res) => {
   const controller = new AliveController();
@@ -32,6 +37,45 @@ router.post("/api/user", validateRegister, (_req, res) => {
     });
 });
 
+router.put("/api/user", authMiddleware, (_req, res) => {
+  const errors = validationResult(_req);
+  if (!errors.isEmpty()) {
+    return res.status(404).json({ errors: errors.array() });
+  }
+  const controller = new UserController();
+  const { email, name, password } = _req.body;
+
+  controller.update({ email, name, password }).then((response) => {
+    res.status(response.code).send(response.payload);
+  });
+});
+
+router.put(
+  "/api/user/profilePicture/:email",
+  authMiddleware,
+  upload.single("profilePicture"),
+  (_req, res) => {
+    const controller = new UserController();
+    const email = _req.params.email;
+    const profilePicture = _req.file;
+
+    if (!profilePicture) {
+      return res.status(400).json({ message: "Profile picture is required." });
+    }
+
+    controller
+      .UpdateProfilePicture(email, profilePicture)
+      .then((response) => {
+        res.status(response.code).json(response.payload);
+      })
+      .catch((error) => {
+        res
+          .status(500)
+          .json({ message: "Internal Server Error", error: error.message });
+      });
+  }
+);
+
 router.post("/api/auth/login", validateLogin, (_req, res) => {
   const controller = new AuthController();
   const { email, password } = _req.body;
@@ -41,11 +85,32 @@ router.post("/api/auth/login", validateLogin, (_req, res) => {
 });
 
 router.post("/api/auth/password-recovery/:email", (_req, res) => {
-  console.log("Email: ", _req.params.email);
   const controller = new AuthController();
   const email = _req.params.email;
   controller.recovery(email).then((response) => {
     res.status(response.code).send(response);
   });
 });
+
+router.delete("/api/user/:email", authMiddleware, (_req, res) => {
+  const controller = new UserController();
+  const email = _req.params.email;
+  controller.delete(email).then((response) => {
+    res.status(response.code).send(response);
+  });
+});
+
+router.get(
+  "/api/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/api/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/success-url");
+  }
+);
+
 export default router;

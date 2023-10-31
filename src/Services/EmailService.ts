@@ -9,7 +9,7 @@ const oAuth2Data = {
     "647098315366-r86pqh99c3qmhp4b6fc64bnfq407dpk6.apps.googleusercontent.com",
   clientSecret: "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",
   refreshToken:
-    "1//04UJ4tvkTsB0XCgYIARAAGAQSNwF-L9IrGaLchheGj4T7SaHV19pB6-TnHauCRETcJef6vYWCSpEfMxsHO51VwWV0x-4vjlZGBEU",
+    "1//04x9CvHyUXEf2CgYIARAAGAQSNwF-L9IrpsXKpwEr17nqzd1Vcny4Fz_x6RetyyG4H5Al3Wn2U2HsVX1agH8CgxDku8FhLJ0A4Uk",
   user: "uadedeliverargrupo04@gmail.com",
 };
 
@@ -61,8 +61,6 @@ export const sendMail = async (
       subject: subject,
       html: html,
     };
-    // Logging commented out for security reasons
-    // console.log("EMAIL! ", mailOptions);
     await transporter.sendMail(mailOptions);
   } catch (error) {
     console.error("Error sending email:", error);
