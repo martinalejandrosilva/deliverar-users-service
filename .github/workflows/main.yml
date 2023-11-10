@@ -1,0 +1,23 @@
+name: Deploy on Tag
+
+on:
+  push:
+    tags:
+      - 'UserAProd*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.2.0
+        with:
+          host: 'userprod-b1.deliver.ar'
+          username: 'ubuntu'
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: '.'
+          target: '/home/ubuntu/nrelease'
