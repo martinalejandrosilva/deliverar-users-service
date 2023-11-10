@@ -11,10 +11,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.2.0
+        uses: actions/checkout@v3
+        
+      - name: Debug
+        run: |
+            ls -la
+            
+      - name: Copia archivos
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: 'userprod-b1.deliver.ar'
           username: 'ubuntu'
