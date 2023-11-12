@@ -192,6 +192,116 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ISupplierResponse": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"payload": {}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplier": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"cuil": {
+						"type": "string"
+					},
+					"domain": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"brandingColors": {
+						"type": "string"
+					},
+					"coverPhoto": {
+						"type": "string"
+					},
+					"logo": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"businessName",
+					"cuil",
+					"domain",
+					"address",
+					"phone",
+					"category",
+					"email",
+					"brandingColors",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplierUpdate": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"cuil": {
+						"type": "string"
+					},
+					"domain": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"brandingColors": {
+						"type": "string"
+					},
+					"coverPhoto": {
+						"type": "string"
+					},
+					"logo": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"cuil"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -453,6 +563,260 @@
 						"description": "The user email.",
 						"in": "path",
 						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/supplier": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "The supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Register a new supplier.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "The supplier registration data.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISupplier",
+								"description": "The supplier registration data."
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "The updated supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates supplier information.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The supplier update data.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISupplierUpdate",
+								"description": "The supplier update data."
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/supplier/logo/{cuil}": {
+			"put": {
+				"operationId": "UpdateLogo",
+				"responses": {
+					"200": {
+						"description": "The updated supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates supplier logo.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The supplier CUIL.",
+						"in": "path",
+						"name": "cuil",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"logo": {
+										"type": "string",
+										"format": "binary",
+										"description": "The supplier's new logo."
+									}
+								},
+								"required": [
+									"logo"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/supplier/coverPhoto/{cuil}": {
+			"put": {
+				"operationId": "UpdateCoverPhoto",
+				"responses": {
+					"200": {
+						"description": "The updated supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates supplier cover photo.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The supplier CUIL.",
+						"in": "path",
+						"name": "cuil",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"coverPhoto": {
+										"type": "string",
+										"format": "binary",
+										"description": "The supplier's new cover photo."
+									}
+								},
+								"required": [
+									"coverPhoto"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/supplier/{cuil}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Status code of operation.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes supplier account.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The supplier CUIL.",
+						"in": "path",
+						"name": "cuil",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "The supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves supplier information.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The supplier CUIL.",
+						"in": "path",
+						"name": "cuil",
 						"required": true,
 						"schema": {
 							"type": "string"

@@ -10,6 +10,7 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 
 import passport from "passport";
+import SupplierController from "../Controllers/supplier";
 const router = express.Router();
 const {
   validateRegister,
@@ -131,5 +132,73 @@ router.get(
     res.json({ success: true, token: `Bearer ${token}` });
   }
 );
+
+router.post("/api/supplier", authMiddleware, upload.none(), (_req, res) => {
+  const controller = new SupplierController();
+  controller.register(_req.body).then((response) => {
+    res.status(response.code).send(response.payload);
+  });
+});
+
+router.put("/api/supplier", authMiddleware, upload.none(), (_req, res) => {
+  const controller = new SupplierController();
+  controller.update(_req.body).then((response) => {
+    res.status(response.code).send(response.payload);
+  });
+});
+
+router.put(
+  "/api/supplier/logo/:cuil",
+  authMiddleware,
+  upload.single("logo"),
+  (_req, res) => {
+    const controller = new SupplierController();
+    const cuil = _req.params.cuil;
+    const logo = _req.file;
+
+    if (!logo) {
+      return res.status(400).json({ message: "Logo is required." });
+    }
+
+    controller.updateLogo(cuil, logo).then((response) => {
+      res.status(response.code).send(response.payload);
+    });
+  }
+);
+
+router.put(
+  "/api/supplier/coverPhoto/:cuil",
+  authMiddleware,
+  upload.single("coverPhoto"),
+  (_req, res) => {
+    const controller = new SupplierController();
+    const cuil = _req.params.cuil;
+    const coverPhoto = _req.file;
+
+    if (!coverPhoto) {
+      return res.status(400).json({ message: "Cover photo is required." });
+    }
+
+    controller.updateCoverPhoto(cuil, coverPhoto).then((response) => {
+      res.status(response.code).send(response.payload);
+    });
+  }
+);
+
+router.delete("/api/supplier/:cuil", authMiddleware, (_req, res) => {
+  const controller = new SupplierController();
+  const cuil = _req.params.cuil;
+  controller.delete(cuil).then((response) => {
+    res.status(response.code).send(response);
+  });
+});
+
+router.get("/api/supplier/:cuil", (_req, res) => {
+  const controller = new SupplierController();
+  const cuil = _req.params.cuil;
+  controller.get(cuil).then((response) => {
+    res.status(response.code).send(response.payload);
+  });
+});
 
 export default router;
