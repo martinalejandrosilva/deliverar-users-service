@@ -1,9 +1,6 @@
 name: Deploy on Tag
 
-on:
-  push:
-    tags:
-      - 'UserAProd*'
+on: [push]
 
 jobs:
   deploy:
@@ -12,16 +9,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Debug
         run: |
-            ls -la
-            
+          ls -la
+
       - name: Copia archivos
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: 'userprod-b1.deliver.ar'
-          username: 'ubuntu'
+          host: "userprod-b1.deliver.ar"
+          username: "ubuntu"
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: '.'
-          target: '/home/ubuntu/nrelease'
+          source: "."
+          target: "/home/ubuntu/nrelease"
