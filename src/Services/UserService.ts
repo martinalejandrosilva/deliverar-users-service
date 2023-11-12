@@ -1,12 +1,14 @@
 import { IUserProfileUpdate, IUserRegister } from "../Models/types";
 import User from "../Models/user.model";
 const bcrypt = require("bcrypt");
-import multer from "multer";
 import cloudinaryService from "./CloudinaryService";
 
 exports.Register = async ({
   name,
   email,
+  dni,
+  address,
+  phone,
   password,
   isProvider,
 }: IUserRegister) => {
@@ -20,6 +22,9 @@ exports.Register = async ({
     const NewUser = new User({
       name,
       email,
+      dni,
+      address,
+      phone,
       isProvider,
       createdOn: Date.now(),
     });
@@ -33,6 +38,9 @@ exports.Register = async ({
       payload: {
         name: NewUser.name,
         email: NewUser.email,
+        dni: NewUser.dni,
+        address: NewUser.address,
+        phone: NewUser.phone,
         isProvider: NewUser.isProvider,
         createdOn: NewUser.createdOn,
       },
@@ -42,7 +50,14 @@ exports.Register = async ({
   }
 };
 
-exports.UpdateUser = async ({ email, name, password }: IUserProfileUpdate) => {
+exports.UpdateUser = async ({
+  email,
+  name,
+  dni,
+  address,
+  phone,
+  password,
+}: IUserProfileUpdate) => {
   try {
     let user = await User.findOne({ email }).lean();
 
@@ -54,6 +69,18 @@ exports.UpdateUser = async ({ email, name, password }: IUserProfileUpdate) => {
 
     if (name && name.trim() !== "") {
       updateFields.name = name;
+    }
+
+    if (dni && dni.trim() !== "") {
+      updateFields.dni = dni;
+    }
+
+    if (address && address.trim() !== "") {
+      updateFields.address = address;
+    }
+
+    if (phone && phone.trim() !== "") {
+      updateFields.phone = phone;
     }
 
     // Check if password is provided and is not an empty string
@@ -81,6 +108,9 @@ exports.UpdateUser = async ({ email, name, password }: IUserProfileUpdate) => {
       payload: {
         name: user?.name,
         email: user?.email,
+        dni: user?.dni,
+        address: user?.address,
+        phone: user?.phone,
         profilePicture: user?.profilePicture,
       },
     };
@@ -120,8 +150,17 @@ export const updateUserProfilePicture = async (
 
 exports.DeleteUser = async (email: string) => {
   try {
-    let user = await User.deleteOne({ email }).lean();
+    await User.deleteOne({ email }).lean();
     return { code: 200, message: "User Deleted" };
+  } catch (error) {
+    return { code: 500, message: "Internal Server Error" };
+  }
+};
+
+exports.GetUserByEmail = async (email: string) => {
+  try {
+    let user = await User.findOne({ email }).lean();
+    return { code: 200, user: user };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }

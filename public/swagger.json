@@ -65,6 +65,15 @@
 					"email": {
 						"type": "string"
 					},
+					"dni": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
 					"password": {
 						"type": "string"
 					},
@@ -83,10 +92,19 @@
 			},
 			"IUserProfileUpdate": {
 				"properties": {
+					"name": {
+						"type": "string"
+					},
 					"email": {
 						"type": "string"
 					},
-					"name": {
+					"dni": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
 						"type": "string"
 					},
 					"password": {
@@ -116,6 +134,18 @@
 					"createdOn": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"dni": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
 					}
 				},
 				"required": [

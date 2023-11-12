@@ -3,8 +3,12 @@ import multer from "multer";
 import AliveController from "../Controllers/alive";
 import UserController from "../Controllers/user";
 import AuthController from "../Controllers/auth";
+const UserService = require("../Services/UserService");
 import { validationResult } from "express-validator";
 import authMiddleware from "../Middleware/authMiddleware";
+const config = require("config");
+const jwt = require("jsonwebtoken");
+
 import passport from "passport";
 const router = express.Router();
 const {
@@ -108,8 +112,23 @@ router.get(
 router.get(
   "/api/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect("/success-url");
+  async (req, res) => {
+    const user = await UserService.GetUserByEmail(req.user?.email);
+    const token = await new Promise<string | undefined>((resolve, reject) => {
+      jwt.sign(
+        user.user,
+        config.get("jwtSecret"),
+        { expiresIn: "1h" },
+        (err: any, token: string | undefined) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(token);
+          }
+        }
+      );
+    });
+    res.json({ success: true, token: `Bearer ${token}` });
   }
 );
 

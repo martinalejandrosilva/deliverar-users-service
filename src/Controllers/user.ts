@@ -32,17 +32,24 @@ export default class UserController {
    * Register a new user.
    * @param name The user name.
    * @param email The user email.
+   * @param dni The user dni.
+   * @param address The user address.
+   * @param phone The user phone.
    * @param password The user password.
    * @param isProvider Represents if the user is a provider or Not.
    * @returns The user data.
    */
   @Post("/")
   public async register(
-    @Body() { name, email, password, isProvider }: IUserRegister
+    @Body()
+    { name, email, dni, address, phone, password, isProvider }: IUserRegister
   ): Promise<IUserResponse> {
     const user = await UserService.Register({
       name,
       email,
+      dni,
+      address,
+      phone,
       password,
       isProvider,
     });
@@ -70,9 +77,10 @@ export default class UserController {
    * Update a new user.
    * @param name The user name.
    * @param email The user email.
+   * @param dni The user dni.
+   * @param address The user address.
+   * @param phone The user phone.
    * @param password The user password.
-   * @param isProvider Represents if the user is a provider or Not.
-   * @param profilePicture User Profile Picture.
    * @returns The user data.
    */
   @Put("/")

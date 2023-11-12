@@ -81,7 +81,6 @@ exports.RecoverPassword = async (
 exports.RegisterOrLoginGoogleUser = async (profile: GoogleProfile) => {
   try {
     let user = await User.findOne({ email: profile.emails[0].value }).lean();
-
     // If user doesn't exist, create a new one
     if (!user) {
       const newUser = new User({
@@ -89,13 +88,12 @@ exports.RegisterOrLoginGoogleUser = async (profile: GoogleProfile) => {
         email: profile.emails[0].value,
         authMethods: ["google"],
         isProvider: false,
-        createdOn: Date.now,
+        createdOn: Date.now(),
       });
-      await newUser.save();
+      user = await newUser.save();
     }
-
     return { code: 200, user: user };
   } catch (err) {
-    return { message: "Ha Ocurrido un Error", code: 500 };
+    return { code: 500, user: null };
   }
 };
