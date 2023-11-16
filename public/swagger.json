@@ -76,16 +76,12 @@
 					},
 					"password": {
 						"type": "string"
-					},
-					"isProvider": {
-						"type": "boolean"
 					}
 				},
 				"required": [
 					"name",
 					"email",
-					"password",
-					"isProvider"
+					"password"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -128,9 +124,6 @@
 					"profilePicture": {
 						"type": "string"
 					},
-					"isProvider": {
-						"type": "boolean"
-					},
 					"createdOn": {
 						"type": "string",
 						"format": "date-time"
@@ -150,8 +143,7 @@
 				},
 				"required": [
 					"email",
-					"password",
-					"isProvider"
+					"password"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -193,20 +185,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ISupplierResponse": {
-				"properties": {
-					"code": {
-						"type": "number",
-						"format": "double"
-					},
-					"payload": {}
-				},
-				"required": [
-					"code"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"ISupplier": {
 				"properties": {
 					"name": {
@@ -215,7 +193,7 @@
 					"businessName": {
 						"type": "string"
 					},
-					"cuil": {
+					"cuit": {
 						"type": "string"
 					},
 					"domain": {
@@ -233,7 +211,10 @@
 					"email": {
 						"type": "string"
 					},
-					"brandingColors": {
+					"primaryColor": {
+						"type": "string"
+					},
+					"secondaryColor": {
 						"type": "string"
 					},
 					"coverPhoto": {
@@ -249,19 +230,75 @@
 				"required": [
 					"name",
 					"businessName",
-					"cuil",
+					"cuit",
 					"domain",
 					"address",
 					"phone",
 					"category",
 					"email",
-					"brandingColors",
+					"primaryColor",
+					"secondaryColor",
 					"password"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ISupplierUpdate": {
+			"AuthenticatedSupplierResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"supplier": {
+						"$ref": "#/components/schemas/ISupplier"
+					},
+					"token": {
+						"type": "string"
+					},
+					"code": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object"
+			},
+			"AuthenticateSupplier": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"cuit": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"cuit"
+				],
+				"type": "object"
+			},
+			"ISupplierResponse": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"token": {
+						"type": "string"
+					},
+					"payload": {
+						"$ref": "#/components/schemas/ISupplier"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplierRegister": {
 				"properties": {
 					"name": {
 						"type": "string"
@@ -269,7 +306,7 @@
 					"businessName": {
 						"type": "string"
 					},
-					"cuil": {
+					"cuit": {
 						"type": "string"
 					},
 					"domain": {
@@ -287,7 +324,62 @@
 					"email": {
 						"type": "string"
 					},
-					"brandingColors": {
+					"primaryColor": {
+						"type": "string"
+					},
+					"secondaryColor": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"businessName",
+					"cuit",
+					"domain",
+					"address",
+					"phone",
+					"category",
+					"email",
+					"primaryColor",
+					"secondaryColor",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplierUpdate": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"cuit": {
+						"type": "string"
+					},
+					"domain": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"primaryColor": {
+						"type": "string"
+					},
+					"secondaryColor": {
 						"type": "string"
 					},
 					"coverPhoto": {
@@ -298,7 +390,7 @@
 					}
 				},
 				"required": [
-					"cuil"
+					"cuit"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -538,6 +630,39 @@
 				}
 			}
 		},
+		"/api/auth/login-supplier": {
+			"post": {
+				"operationId": "LoginSupplier",
+				"responses": {
+					"200": {
+						"description": "The supplier data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthenticatedSupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Authenticate a supplier.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AuthenticateSupplier"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/auth/password-recovery/{email}": {
 			"post": {
 				"operationId": "Recovery",
@@ -598,7 +723,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ISupplier",
+								"$ref": "#/components/schemas/ISupplierRegister",
 								"description": "The supplier registration data."
 							}
 						}
@@ -643,7 +768,7 @@
 				}
 			}
 		},
-		"/api/supplier/logo/{cuil}": {
+		"/api/supplier/logo/{cuit}": {
 			"put": {
 				"operationId": "UpdateLogo",
 				"responses": {
@@ -669,9 +794,9 @@
 				],
 				"parameters": [
 					{
-						"description": "The supplier CUIL.",
+						"description": "The supplier CUIT.",
 						"in": "path",
-						"name": "cuil",
+						"name": "cuit",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -700,7 +825,7 @@
 				}
 			}
 		},
-		"/api/supplier/coverPhoto/{cuil}": {
+		"/api/supplier/coverPhoto/{cuit}": {
 			"put": {
 				"operationId": "UpdateCoverPhoto",
 				"responses": {
@@ -726,9 +851,9 @@
 				],
 				"parameters": [
 					{
-						"description": "The supplier CUIL.",
+						"description": "The supplier CUIT.",
 						"in": "path",
-						"name": "cuil",
+						"name": "cuit",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -757,7 +882,7 @@
 				}
 			}
 		},
-		"/api/supplier/{cuil}": {
+		"/api/supplier/{cuit}": {
 			"delete": {
 				"operationId": "Delete",
 				"responses": {
@@ -783,9 +908,9 @@
 				],
 				"parameters": [
 					{
-						"description": "The supplier CUIL.",
+						"description": "The supplier cuit.",
 						"in": "path",
-						"name": "cuil",
+						"name": "cuit",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -814,9 +939,9 @@
 				"security": [],
 				"parameters": [
 					{
-						"description": "The supplier CUIL.",
+						"description": "The supplier cuit.",
 						"in": "path",
-						"name": "cuil",
+						"name": "cuit",
 						"required": true,
 						"schema": {
 							"type": "string"

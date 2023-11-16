@@ -12,17 +12,11 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   dni: { type: String, required: false },
   password: { type: String, required: false },
-  isProvider: { type: Boolean, required: true },
   createdOn: { type: Date, default: Date.now },
   dateOfBirth: { type: Date, required: false },
-  address: { type: String, required: true },
-  phone: { type: String, required: true },
+  address: { type: String, required: false },
+  phone: { type: String, required: false },
   profilePicture: { type: String, required: false },
-  authMethods: {
-    type: [String],
-    enum: ["local", "google"],
-    required: true,
-  },
 });
 
 const User = mongoose.model<IUser>("User", userSchema);

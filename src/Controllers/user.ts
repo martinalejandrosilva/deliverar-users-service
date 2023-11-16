@@ -42,7 +42,7 @@ export default class UserController {
   @Post("/")
   public async register(
     @Body()
-    { name, email, dni, address, phone, password, isProvider }: IUserRegister
+    { name, email, dni, address, phone, password }: IUserRegister
   ): Promise<IUserResponse> {
     const user = await UserService.Register({
       name,
@@ -51,12 +51,11 @@ export default class UserController {
       address,
       phone,
       password,
-      isProvider,
     });
     if (user.code === 200) {
       const token = await new Promise<string | undefined>((resolve, reject) => {
         jwt.sign(
-          user.payload, //Right now the token is returning the user and email define what should return.
+          user.payload,
           config.get("jwtSecret"),
           { expiresIn: 3600 },
           (err: any, token: string | undefined) => {
@@ -86,11 +85,14 @@ export default class UserController {
   @Put("/")
   @Security("BearerAuth")
   public async update(
-    @Body() { email, name, password }: IUserProfileUpdate
+    @Body() { name, email, dni, address, phone, password }: IUserProfileUpdate
   ): Promise<IUserResponse> {
     const user = await UserService.UpdateUser({
-      email,
       name,
+      email,
+      dni,
+      address,
+      phone,
       password,
     });
     if (user.code === 200) {

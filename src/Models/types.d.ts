@@ -5,7 +5,6 @@ export interface IUserRegister {
   address?: string;
   phone?: string;
   password: string;
-  isProvider: boolean;
 }
 
 export interface IUser {
@@ -14,7 +13,6 @@ export interface IUser {
   email: string;
   dni: string;
   password: string;
-  isProvider: boolean;
   createdOn?: Date;
   dateOfBirth?: Date;
   address?: string;
@@ -36,7 +34,6 @@ export interface IUserAuthenticated {
   email: string;
   password: string;
   profilePicture?: string;
-  isProvider: boolean;
   createdOn?: Date;
   name?: string;
   dni?: string;
@@ -47,33 +44,50 @@ export interface IUserAuthenticated {
 interface GoogleProfile {
   displayName: string;
   emails: { value: string }[];
+  photos: { value: string }[];
 }
 
 export interface ISupplier {
   name: string;
   businessName: string;
-  cuil: string;
+  cuit: string;
   domain: string;
   address: string;
   phone: string;
   category: string;
   email: string;
-  brandingColors: string;
+  primaryColor: string;
+  secondaryColor: string;
   coverPhoto?: string;
   logo?: string;
+  password: string;
+}
+
+export interface ISupplierRegister {
+  name: string;
+  businessName: string;
+  cuit: string;
+  domain: string;
+  address: string;
+  phone: string;
+  category: string;
+  email: string;
+  primaryColor: string;
+  secondaryColor: string;
   password: string;
 }
 
 export interface ISupplierUpdate {
   name?: string;
   businessName?: string;
-  cuil: string;
+  cuit: string;
   domain?: string;
   address?: string;
   phone?: string;
   category?: string;
   email?: string;
-  brandingColors?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
   coverPhoto?: string;
   logo?: string;
 }

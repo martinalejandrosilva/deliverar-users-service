@@ -10,12 +10,15 @@ import {
   Tags,
   UploadedFile,
 } from "tsoa";
-import { ISupplier, ISupplierUpdate } from "../Models/types";
+import { ISupplier, ISupplierRegister, ISupplierUpdate } from "../Models/types";
 const SupplierService = require("../Services/SupplierService");
+const config = require("config");
+const jwt = require("jsonwebtoken");
 
 interface ISupplierResponse {
   code: number;
-  payload?: any; // Define the payload according to your supplier payload structure
+  token?: string;
+  payload?: ISupplier;
 }
 
 @Route("api/supplier")
@@ -28,9 +31,31 @@ export default class SupplierController {
    */
   @Post("/")
   public async register(
-    @Body() supplierData: ISupplier
+    @Body() supplierData: ISupplierRegister
   ): Promise<ISupplierResponse> {
-    return await SupplierService.Register(supplierData);
+    const supplier = await SupplierService.Register(supplierData);
+    let token = undefined;
+    if (supplier.code === 200) {
+      token = await new Promise<string | undefined>((resolve, reject) => {
+        jwt.sign(
+          supplier.payload,
+          config.get("jwtSecret"),
+          { expiresIn: 3600 },
+          (err: any, token: string | undefined) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(token);
+            }
+          }
+        );
+      });
+    }
+    return {
+      code: supplier.code,
+      token: token,
+      payload: supplier.payload,
+    };
   }
 
   /**
@@ -48,55 +73,55 @@ export default class SupplierController {
 
   /**
    * Updates supplier logo.
-   * @param cuil The supplier CUIL.
+   * @param cuit The supplier CUIT.
    * @param logo The supplier's new logo.
    * @returns The updated supplier data with status code.
    */
-  @Put("/logo/:cuil")
+  @Put("/logo/:cuit")
   @Security("BearerAuth")
   public async updateLogo(
-    @Path() cuil: string,
+    @Path() cuit: string,
     @UploadedFile("logo") logo: Express.Multer.File
   ): Promise<ISupplierResponse> {
-    return await SupplierService.UpdateSupplierLogo(cuil, logo.buffer);
+    return await SupplierService.UpdateSupplierLogo(cuit, logo.buffer);
   }
 
   /**
    * Updates supplier cover photo.
-   * @param cuil The supplier CUIL.
+   * @param cuit The supplier CUIT.
    * @param coverPhoto The supplier's new cover photo.
    * @returns The updated supplier data with status code.
    */
-  @Put("/coverPhoto/:cuil")
+  @Put("/coverPhoto/:cuit")
   @Security("BearerAuth")
   public async updateCoverPhoto(
-    @Path() cuil: string,
+    @Path() cuit: string,
     @UploadedFile("coverPhoto") coverPhoto: Express.Multer.File
   ): Promise<ISupplierResponse> {
     return await SupplierService.updateSupplierCoverPhoto(
-      cuil,
+      cuit,
       coverPhoto.buffer
     );
   }
 
   /**
    * Deletes supplier account.
-   * @param cuil The supplier CUIL.
+   * @param cuit The supplier cuit.
    * @returns Status code of operation.
    */
-  @Delete("/:cuil")
+  @Delete("/:cuit")
   @Security("BearerAuth")
-  public async delete(@Path("cuil") cuil: string): Promise<ISupplierResponse> {
-    return await SupplierService.DeleteSupplier(cuil);
+  public async delete(@Path("cuit") cuit: string): Promise<ISupplierResponse> {
+    return await SupplierService.DeleteSupplier(cuit);
   }
 
   /**
    * Retrieves supplier information.
-   * @param cuil The supplier CUIL.
+   * @param cuit The supplier cuit.
    * @returns The supplier data with status code.
    */
-  @Get("/:cuil")
-  public async get(@Path("cuil") cuil: string): Promise<ISupplierResponse> {
-    return await SupplierService.GetSupplier(cuil);
+  @Get("/:cuit")
+  public async get(@Path("cuit") cuit: string): Promise<ISupplierResponse> {
+    return await SupplierService.GetSupplier(cuit);
   }
 }

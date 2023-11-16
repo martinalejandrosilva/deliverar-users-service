@@ -10,7 +10,6 @@ exports.Register = async ({
   address,
   phone,
   password,
-  isProvider,
 }: IUserRegister) => {
   try {
     let user = await User.findOne({ email }).lean();
@@ -25,7 +24,6 @@ exports.Register = async ({
       dni,
       address,
       phone,
-      isProvider,
       createdOn: Date.now(),
     });
     const salt = await bcrypt.genSalt(10);
@@ -41,7 +39,6 @@ exports.Register = async ({
         dni: NewUser.dni,
         address: NewUser.address,
         phone: NewUser.phone,
-        isProvider: NewUser.isProvider,
         createdOn: NewUser.createdOn,
       },
     };

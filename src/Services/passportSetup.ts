@@ -31,9 +31,11 @@ passport.use(
       done: (arg0: Error | null, arg1: any) => void
     ) => {
       const result = await AuthService.RegisterOrLoginGoogleUser(profile);
+      console.log("Result", result);
       if (result.code === 200) {
         done(null, result.user);
       } else {
+        console.log("Error", result.message);
         done(new Error(result.message), null);
       }
     }

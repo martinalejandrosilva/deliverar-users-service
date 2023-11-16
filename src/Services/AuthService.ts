@@ -1,6 +1,7 @@
-import { GoogleProfile, IUser } from "../Models/types";
+import { GoogleProfile, ISupplier, IUser } from "../Models/types";
 import User from "../Models/user.model";
 import { sendMail } from "./EmailService";
+import Supplier from "../Models/supplier.model";
 const bcrypt = require("bcrypt");
 
 export interface IUserAuthenticate {
@@ -11,6 +12,17 @@ export type AuthenticateServiceResponse = {
   code: number;
   user?: IUser;
   message?: string;
+};
+
+export type AuthenticateServiceSupplierResponse = {
+  code: number;
+  supplier?: ISupplier;
+  message?: string;
+};
+
+export type AuthenticateSupplier = {
+  cuit: string;
+  password: string;
 };
 
 exports.Authenticate = async ({
@@ -33,6 +45,31 @@ exports.Authenticate = async ({
       };
     }
     return { code: 200, user: user };
+  } catch (err) {
+    return { message: "Ha Ocurrido un Error", code: 500 };
+  }
+};
+
+exports.AuthenticateSupplier = async ({
+  cuit,
+  password,
+}: AuthenticateSupplier): Promise<AuthenticateServiceSupplierResponse> => {
+  try {
+    let supplier = await Supplier.findOne({ cuit: cuit }).lean();
+
+    if (!supplier) {
+      return { message: "Ha Ocurrido un Error.!", code: 500 };
+    }
+
+    const isMatch = await bcrypt.compare(password, supplier.password);
+
+    if (!isMatch) {
+      return {
+        message: "cuit o Contraseña Incorrecta",
+        code: 400,
+      };
+    }
+    return { code: 200, supplier: supplier };
   } catch (err) {
     return { message: "Ha Ocurrido un Error", code: 500 };
   }
@@ -86,8 +123,7 @@ exports.RegisterOrLoginGoogleUser = async (profile: GoogleProfile) => {
       const newUser = new User({
         name: profile.displayName,
         email: profile.emails[0].value,
-        authMethods: ["google"],
-        isProvider: false,
+        profilePicture: profile.photos[0].value,
         createdOn: Date.now(),
       });
       user = await newUser.save();

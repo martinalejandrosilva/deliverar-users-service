@@ -7,17 +7,19 @@ import cloudinaryService from "./CloudinaryService";
 exports.Register = async ({
   name,
   businessName,
-  cuil,
+  cuit,
   domain,
   address,
   phone,
   category,
   email,
-  brandingColors,
+  primaryColor,
+  secondaryColor,
   password,
 }: ISupplier) => {
   try {
-    let supplier = await Supplier.findOne({ cuil }).lean();
+    console.log("here", cuit);
+    let supplier = await Supplier.findOne({ cuit: cuit }).lean();
 
     if (supplier) {
       return { code: 400, message: "Supplier already exists" };
@@ -26,13 +28,14 @@ exports.Register = async ({
     const NewSupplier = new Supplier({
       name,
       businessName,
-      cuil,
+      cuit,
       domain,
       address,
       phone,
       category,
       email,
-      brandingColors,
+      primaryColor,
+      secondaryColor,
     });
     const salt = await bcrypt.genSalt(10);
     NewSupplier.password = await bcrypt.hash(password, salt);
@@ -44,16 +47,18 @@ exports.Register = async ({
       payload: {
         name: NewSupplier.name,
         businessName: NewSupplier.businessName,
-        cuil: NewSupplier.cuil,
+        cuit: NewSupplier.cuit,
         domain: NewSupplier.domain,
         address: NewSupplier.address,
         phone: NewSupplier.phone,
         category: NewSupplier.category,
         email: NewSupplier.email,
-        brandingColors: NewSupplier.brandingColors,
+        primaryColor: NewSupplier.primaryColor,
+        secondaryColor: NewSupplier.secondaryColor,
       },
     };
   } catch (error) {
+    console.log(error);
     return { code: 500, message: "Internal Server Error" };
   }
 };
@@ -62,16 +67,17 @@ exports.UpdateSupplier = async ({
   email,
   name,
   businessName,
-  cuil,
+  cuit: cuit,
   domain,
   address,
   phone,
   category,
-  brandingColors,
+  primaryColor,
+  secondaryColor,
   password,
 }: ISupplier) => {
   try {
-    let supplier = await Supplier.findOne({ cuil }).lean();
+    let supplier = await Supplier.findOne({ cuit: cuit }).lean();
 
     if (!supplier) {
       return { code: 400, message: "Supplier does not exists" };
@@ -81,7 +87,7 @@ exports.UpdateSupplier = async ({
     supplier.password = await bcrypt.hash(password, salt);
 
     await Supplier.updateOne(
-      { cuil },
+      { cuit: cuit },
       {
         name,
         businessName,
@@ -90,7 +96,8 @@ exports.UpdateSupplier = async ({
         phone,
         category,
         email,
-        brandingColors,
+        primaryColor,
+        secondaryColor,
         password: supplier.password,
       }
     );
@@ -100,13 +107,14 @@ exports.UpdateSupplier = async ({
       payload: {
         name,
         businessName,
-        cuil,
+        cuit,
         domain,
         address,
         phone,
         category,
         email,
-        brandingColors,
+        primaryColor,
+        secondaryColor,
       },
     };
   } catch (error) {
@@ -114,12 +122,12 @@ exports.UpdateSupplier = async ({
   }
 };
 
-exports.UpdateSupplierLogo = async (cuil: string, logo: Buffer) => {
+exports.UpdateSupplierLogo = async (cuit: string, logo: Buffer) => {
   try {
     const cloudinaryResult = await cloudinaryService.uploadImage(logo);
 
     const updatedSupplier = await Supplier.findOneAndUpdate(
-      { cuil },
+      { cuit: cuit },
       { $set: { logo: cloudinaryResult.url } },
       { new: true }
     ).lean();
@@ -139,12 +147,12 @@ exports.UpdateSupplierLogo = async (cuil: string, logo: Buffer) => {
   }
 };
 
-exports.updateSupplierCoverPhoto = async (cuil: string, coverPhoto: Buffer) => {
+exports.updateSupplierCoverPhoto = async (cuit: string, coverPhoto: Buffer) => {
   try {
     const cloudinaryResult = await cloudinaryService.uploadImage(coverPhoto);
 
     const updatedSupplier = await Supplier.findOneAndUpdate(
-      { cuil },
+      { cuit: cuit },
       { $set: { coverPhoto: cloudinaryResult.url } },
       { new: true }
     ).lean();
@@ -153,7 +161,7 @@ exports.updateSupplierCoverPhoto = async (cuil: string, coverPhoto: Buffer) => {
       return { code: 400, message: "Supplier does not exists" };
     }
 
-    await Supplier.updateOne({ cuil }, { coverPhoto });
+    await Supplier.updateOne({ cuit: cuit }, { coverPhoto });
 
     return {
       code: 200,
@@ -166,18 +174,18 @@ exports.updateSupplierCoverPhoto = async (cuil: string, coverPhoto: Buffer) => {
   }
 };
 
-exports.DeleteSupplier = async (cuil: string) => {
+exports.DeleteSupplier = async (cuit: string) => {
   try {
-    await Supplier.deleteOne({ cuil }).lean();
+    await Supplier.deleteOne({ cuit: cuit }).lean();
     return { code: 200, message: "Supplier Deleted" };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }
 };
 
-exports.GetSupplier = async (cuil: string) => {
+exports.GetSupplier = async (cuit: string) => {
   try {
-    const supplier = await Supplier.findOne({ cuil }).lean();
+    const supplier = await Supplier.findOne({ cuit: cuit }).lean();
 
     if (!supplier) {
       return { code: 404, message: "Supplier not found" };
