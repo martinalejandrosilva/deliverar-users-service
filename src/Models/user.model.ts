@@ -17,6 +17,7 @@ const userSchema = new Schema({
   address: { type: String, required: false },
   phone: { type: String, required: false },
   profilePicture: { type: String, required: false },
+  isProvider: { type: Boolean, default: false },
 });
 
 const User = mongoose.model<IUser>("User", userSchema);

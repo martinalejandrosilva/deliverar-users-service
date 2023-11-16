@@ -55,6 +55,7 @@ exports.Register = async ({
         email: NewSupplier.email,
         primaryColor: NewSupplier.primaryColor,
         secondaryColor: NewSupplier.secondaryColor,
+        isProvider: NewSupplier.isProvider,
       },
     };
   } catch (error) {
@@ -67,7 +68,7 @@ exports.UpdateSupplier = async ({
   email,
   name,
   businessName,
-  cuit: cuit,
+  cuit,
   domain,
   address,
   phone,
@@ -115,6 +116,7 @@ exports.UpdateSupplier = async ({
         email,
         primaryColor,
         secondaryColor,
+        isProvider: true,
       },
     };
   } catch (error) {

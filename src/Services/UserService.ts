@@ -40,6 +40,7 @@ exports.Register = async ({
         address: NewUser.address,
         phone: NewUser.phone,
         createdOn: NewUser.createdOn,
+        isProvider: NewUser.isProvider,
       },
     };
   } catch (error) {
@@ -109,6 +110,7 @@ exports.UpdateUser = async ({
         address: user?.address,
         phone: user?.phone,
         profilePicture: user?.profilePicture,
+        isProvider: user?.isProvider,
       },
     };
   } catch (error) {

@@ -18,6 +18,7 @@ export interface IUser {
   address?: string;
   phone?: string;
   profilePicture?: string;
+  isProvider: boolean;
 }
 //To Define user Localizacion.
 
@@ -39,6 +40,7 @@ export interface IUserAuthenticated {
   dni?: string;
   address?: string;
   phone?: string;
+  isProvider: boolean;
 }
 
 interface GoogleProfile {
@@ -61,6 +63,7 @@ export interface ISupplier {
   coverPhoto?: string;
   logo?: string;
   password: string;
+  isProvider: boolean;
 }
 
 export interface ISupplierRegister {

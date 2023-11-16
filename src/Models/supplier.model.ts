@@ -14,6 +14,7 @@ const supplierSchema = new Schema({
   coverPhoto: { type: String, required: false },
   logo: { type: String, required: false },
   password: { type: String, required: true },
+  isProvider: { type: Boolean, default: true },
 });
 
 const Supplier = mongoose.model("Supplier", supplierSchema);

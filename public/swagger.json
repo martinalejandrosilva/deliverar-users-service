@@ -139,11 +139,15 @@
 					},
 					"phone": {
 						"type": "string"
+					},
+					"isProvider": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"email",
-					"password"
+					"password",
+					"isProvider"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -225,6 +229,9 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"isProvider": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -238,7 +245,8 @@
 					"email",
 					"primaryColor",
 					"secondaryColor",
-					"password"
+					"password",
+					"isProvider"
 				],
 				"type": "object",
 				"additionalProperties": false
