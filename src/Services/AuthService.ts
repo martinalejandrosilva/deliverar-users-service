@@ -25,6 +25,20 @@ export type AuthenticateSupplier = {
   password: string;
 };
 
+const generatePassword = () => {
+  const length = 8;
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+  let retVal = "";
+  while (!(/[A-Z]/.test(retVal) && /[\W_]/.test(retVal))) {
+    retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
+      retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+  }
+  return retVal;
+};
+
 exports.Authenticate = async ({
   email,
   password,
@@ -89,7 +103,7 @@ exports.RecoverPassword = async (
     }
 
     // Generate a new password
-    const newPassword = Math.random().toString(36).slice(-8);
+    const newPassword = generatePassword();
 
     // Hash the new password
     const salt = await bcrypt.genSalt(10);

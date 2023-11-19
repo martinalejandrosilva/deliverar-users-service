@@ -163,8 +163,6 @@ exports.updateSupplierCoverPhoto = async (cuit: string, coverPhoto: Buffer) => {
       return { code: 400, message: "Supplier does not exists" };
     }
 
-    await Supplier.updateOne({ cuit: cuit }, { coverPhoto });
-
     return {
       code: 200,
       payload: {

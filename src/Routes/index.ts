@@ -17,6 +17,7 @@ const {
   validateLogin,
   validateSupplierLogin,
   validateSupplierRegister,
+  validateSupplierUpdate,
 } = require("../Validation/userValidation");
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -163,7 +164,7 @@ router.post("/api/supplier", validateSupplierRegister, (_req, res) => {
 router.put(
   "/api/supplier",
   authMiddleware,
-  validateSupplierRegister,
+  validateSupplierUpdate,
   (_req, res) => {
     const errors = validationResult(_req);
     if (!errors.isEmpty()) {

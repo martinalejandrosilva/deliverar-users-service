@@ -93,4 +93,5 @@ export interface ISupplierUpdate {
   secondaryColor?: string;
   coverPhoto?: string;
   logo?: string;
+  password?: string;
 }

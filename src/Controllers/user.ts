@@ -36,7 +36,6 @@ export default class UserController {
    * @param address The user address.
    * @param phone The user phone.
    * @param password The user password.
-   * @param isProvider Represents if the user is a provider or Not.
    * @returns The user data.
    */
   @Post("/")
