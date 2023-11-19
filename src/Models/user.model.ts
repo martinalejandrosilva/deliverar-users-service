@@ -18,6 +18,7 @@ const userSchema = new Schema({
   phone: { type: String, required: false },
   profilePicture: { type: String, required: false },
   isProvider: { type: Boolean, default: false },
+  isEmployee: { type: Boolean, default: false },
 });
 
 const User = mongoose.model<IUser>("User", userSchema);

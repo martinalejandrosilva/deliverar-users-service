@@ -95,3 +95,14 @@ export interface ISupplierUpdate {
   logo?: string;
   password?: string;
 }
+
+export type Sender = "usuarios";
+export type EventName = "new_user_create";
+export interface IEvent<T> {
+  sender: sender;
+  created_at: Date;
+  event_name: string;
+  data: T;
+}
+
+export type sender = "usuarios";

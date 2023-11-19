@@ -2,6 +2,15 @@ import { IUserProfileUpdate, IUserRegister } from "../Models/types";
 import User from "../Models/user.model";
 const bcrypt = require("bcrypt");
 import cloudinaryService from "./CloudinaryService";
+import { EDA } from "./EDA/EdaIntegrator";
+
+type createUserEventPayload = {
+  username: string;
+  password: string;
+  name: string;
+  email: string;
+  document: string;
+};
 
 exports.Register = async ({
   name,
@@ -28,8 +37,21 @@ exports.Register = async ({
     });
     const salt = await bcrypt.genSalt(10);
     NewUser.password = await bcrypt.hash(password, salt);
-
+    const eda = EDA.getInstance();
     await NewUser.save();
+
+    const newUserEvent: createUserEventPayload = {
+      username: NewUser.name,
+      password: password,
+      name: NewUser.name,
+      email: NewUser.email,
+      document: NewUser.dni,
+    };
+    //Guild 2 Use Case
+    eda.publishMessage<createUserEventPayload>(
+      "/app/send/usuarios",
+      newUserEvent
+    );
 
     return {
       code: 200,

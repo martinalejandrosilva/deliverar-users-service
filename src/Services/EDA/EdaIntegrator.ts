@@ -1,5 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import { WebSocket } from "ws";
+import { IEvent } from "../../Models/types";
 let fs = require("fs");
 Object.assign(global, { WebSocket });
 
@@ -7,6 +8,8 @@ export class EDA {
   private static instance: EDA;
   private brokerURL!: string;
   public client!: Client;
+  private isConnected: boolean = false;
+  private messageQueue: Array<{ topic: string; message: any }> = [];
 
   private constructor() {
     // Singleton
@@ -28,24 +31,35 @@ export class EDA {
     console.log("Finished EDA init...");
   }
 
-  public publishMessage(topic: string, message: any) {
-    if (!this.client.connected) {
-      this.client = new Client({
-        brokerURL: this.brokerURL,
-        onConnect: (frame) => {
-          this.client.publish({
-            destination: topic,
-            body: JSON.stringify(message),
-          });
-        },
-        onDisconnect: () => {
-          console.log("Disconnected from websocket");
-        },
-        onStompError: (frame) => {
-          console.log("Broker reported error: " + frame.headers["message"]);
-          console.log("Additional details: " + frame.body);
-        },
+  public publishMessage<T>(topic: string, message: T) {
+    const event: IEvent<T> = {
+      sender: "usuarios",
+      created_at: new Date(),
+      event_name: "new_user_create",
+      data: message,
+    };
+
+    if (this.client.connected) {
+      this.client.publish({
+        destination: topic,
+        body: JSON.stringify(message),
       });
+    } else {
+      this.messageQueue.push({ topic, message });
+    }
+  }
+
+  private processMessageQueue() {
+    while (this.messageQueue.length > 0) {
+      const dequeuedItem = this.messageQueue.shift();
+      if (dequeuedItem) {
+        // Check if dequeuedItem is not undefined
+        const { topic, message } = dequeuedItem;
+        this.client.publish({
+          destination: topic,
+          body: JSON.stringify(message),
+        });
+      }
     }
   }
 
@@ -53,6 +67,13 @@ export class EDA {
     fs.appendFile("logs.txt", data + "\n", function (err: { message: string }) {
       if (err) {
         console.log("EDA Usuarios error" + err.message);
+      }
+    });
+  }
+  private process_admin_personal(data: string) {
+    fs.appendFile("logs.txt", data + "\n", function (err: { message: string }) {
+      if (err) {
+        console.log("EDA Adm. Personal error" + err.message);
       }
     });
   }
@@ -64,9 +85,16 @@ export class EDA {
     this.client = new Client({
       brokerURL: this.brokerURL,
       onConnect: (frame) => {
-        // Sub a Usuarios
+        this.isConnected = true;
+        this.processMessageQueue();
+
         let sub_usuarios = this.client.subscribe("/topic/usuarios", (message) =>
           this.process_usuarios(message.body)
+        );
+
+        let sub_adm_pesonal = this.client.subscribe(
+          "/topic/admin-personal",
+          (message) => this.process_admin_personal(message.body)
         );
       },
       onDisconnect: () => {

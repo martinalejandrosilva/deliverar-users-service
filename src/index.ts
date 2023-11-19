@@ -18,7 +18,7 @@ connectDB();
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(express.static("public"));
-
+//Yo me suscribo a la cola de usuarios ahi me van a llegar todos los topics relevantes.
 app.use(
   "/swagger",
   swaggerUi.serve,
