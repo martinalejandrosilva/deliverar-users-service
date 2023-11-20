@@ -5,3 +5,4 @@
 {"content":"{\"message\":\"hello!\"}","from":"/topic/usuarios"}
 {"content":"{\"message\":\"hello again?!\"}","from":"/topic/usuarios"}
 {"content":"{\"username\":\"string\",\"password\":\"$2b$10$S0pFRlLIhVLCE.3G2HWvkOUufaFSYacO8Tc8.QxLjJcKnVHDaMLoW\",\"name\":\"string\",\"email\":\"masdasd@asdasd.com\",\"document\":\"32222222\"}","from":"/topic/usuarios"}
+{"content":"{\"username\":\"Martin Alejandro Silva\",\"password\":\"String123$\",\"name\":\"Martin Alejandro Silva\",\"email\":\"martin_alejandro_silva@outlook.com\",\"document\":\"36888888\"}","from":"/topic/usuarios"}

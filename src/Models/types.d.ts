@@ -91,8 +91,6 @@ export interface ISupplierUpdate {
   email?: string;
   primaryColor?: string;
   secondaryColor?: string;
-  coverPhoto?: string;
-  logo?: string;
   password?: string;
 }
 

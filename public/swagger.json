@@ -390,12 +390,6 @@
 					"secondaryColor": {
 						"type": "string"
 					},
-					"coverPhoto": {
-						"type": "string"
-					},
-					"logo": {
-						"type": "string"
-					},
 					"password": {
 						"type": "string"
 					}
