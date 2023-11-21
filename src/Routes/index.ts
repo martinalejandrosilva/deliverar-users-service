@@ -11,6 +11,7 @@ const jwt = require("jsonwebtoken");
 
 import passport from "passport";
 import SupplierController from "../Controllers/supplier";
+import OrderController from "../Controllers/order";
 const router = express.Router();
 const {
   validateRegister,
@@ -228,6 +229,18 @@ router.get("/api/supplier/:cuit", (_req, res) => {
   const cuit = _req.params.cuit;
   controller.get(cuit).then((response) => {
     res.status(response.code).send(response.payload);
+  });
+});
+
+router.get("/api/orders/:email", authMiddleware, (_req, res) => {
+  const controller = new OrderController();
+  const email = _req.params.email;
+  controller.getOrders(email).then((response) => {
+    if (response.length > 0) {
+      res.status(200).send(response);
+    } else {
+      res.status(404).send(response);
+    }
   });
 });
 

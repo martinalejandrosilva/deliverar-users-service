@@ -33,9 +33,7 @@ export class EDA {
     console.log("Finished EDA init...");
   }
 
- 
-
-  public publishMessage<T>(topic: string , eventName: EventName ,message: T) {
+  public publishMessage<T>(topic: string, eventName: EventName, message: T) {
     const event: IEvent<T> = {
       sender: "usuarios",
       created_at: Date.now(),
@@ -75,12 +73,15 @@ export class EDA {
     });
   }
   private process_admin_personal(data: string) {
-    fs.appendFile("AdminDePersonal.txt", data + "\n", function (err: { message: string }) {
-      if (err) {
-        console.log("EDA Adm. Personal error" + err.message);
+    fs.appendFile(
+      "AdminDePersonal.txt",
+      data + "\n",
+      function (err: { message: string }) {
+        if (err) {
+          console.log("EDA Adm. Personal error" + err.message);
+        }
       }
-    });
-    
+    );
   }
 
   // Vamos a quedarnos escuchando las diferentes colas aca
@@ -93,10 +94,11 @@ export class EDA {
         this.isConnected = true;
         this.processMessageQueue();
 
-        let sub_usuarios = this.client.subscribe("/topic/usuarios", (message) =>
-          {
+        let sub_usuarios = this.client.subscribe(
+          "/topic/usuarios",
+          (message) => {
             adminPersonalHandler(message.body); //remove
-            this.process_usuarios(message.body)
+            this.process_usuarios(message.body);
           }
         );
 
@@ -104,7 +106,7 @@ export class EDA {
           "/topic/admin-personal",
           (message) => {
             adminPersonalHandler(message.body);
-            this.process_admin_personal(message.body)
+            this.process_admin_personal(message.body);
           }
         );
       },
@@ -118,4 +120,3 @@ export class EDA {
     });
   }
 }
-
