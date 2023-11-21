@@ -142,7 +142,6 @@ export class EDA {
         this.isConnected = true;
 
         this.client.subscribe("/topic/usuarios", (message) => {
-          robotsHandler(message.body);
           this.process_usuarios(message.body);
         });
 

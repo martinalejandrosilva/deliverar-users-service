@@ -232,14 +232,14 @@ router.get("/api/supplier/:cuit", (_req, res) => {
   });
 });
 
-router.get("/api/orders/:email", authMiddleware, (_req, res) => {
+router.get("/api/order/:email", (_req, res) => {
   const controller = new OrderController();
   const email = _req.params.email;
   controller.getOrders(email).then((response) => {
-    if (response.length > 0) {
+    if (response) {
       res.status(200).send(response);
     } else {
-      res.status(404).send(response);
+      res.status(404);
     }
   });
 });

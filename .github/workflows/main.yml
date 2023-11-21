@@ -10,6 +10,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "21.1.0"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Swagger
+        run: npm run swagger
+
+      - name: Build TypeScript
+        run: tsc --build
+
       - name: Debug
         run: |
           ls -la

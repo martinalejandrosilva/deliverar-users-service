@@ -11,7 +11,6 @@ export default class OrderController {
    * @returns The user orders.
    */
   @Get("/:email")
-  @Security("BearerAuth")
   public async getOrders(email: string): Promise<IOrder[]> {
     try {
       const orders = await OrderService.getOrdersByUser(email);

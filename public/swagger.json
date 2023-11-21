@@ -1066,11 +1066,7 @@
 				"tags": [
 					"Order"
 				],
-				"security": [
-					{
-						"BearerAuth": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"description": "The user email.",

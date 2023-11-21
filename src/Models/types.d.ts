@@ -154,6 +154,7 @@ export type createUserEventPayload = {
   document: string;
   address: string;
   role?: string;
+  vip?: boolean;
 };
 
 export type createUserEmployeePayload = {

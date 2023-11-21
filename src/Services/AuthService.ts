@@ -1,4 +1,11 @@
-import { GoogleProfile, IEvent, ISupplier, IUser, UserEmployeePasswordChange, createUserEventPayload } from "../Models/types";
+import {
+  GoogleProfile,
+  IEvent,
+  ISupplier,
+  IUser,
+  UserEmployeePasswordChange,
+  createUserEventPayload,
+} from "../Models/types";
 import User from "../Models/user.model";
 import { sendMail } from "./EmailService";
 import Supplier from "../Models/supplier.model";
@@ -61,7 +68,7 @@ exports.Authenticate = async ({
     }
 
     const eda = EDA.getInstance();
-    const eventPayload : IEvent<createUserEventPayload> = {
+    const eventPayload: IEvent<createUserEventPayload> = {
       sender: "usuarios",
       created_at: Date.now(),
       event_name: "login_user",
@@ -72,9 +79,10 @@ exports.Authenticate = async ({
         email: user?.email,
         document: user?.dni,
         address: user?.address ? user?.address : "",
-      }
-    }
-    eda.publishMessage("/app/send/usuarios", "login_user",eventPayload)
+        vip: user?.vip,
+      },
+    };
+    eda.publishMessage("/app/send/usuarios", "login_user", eventPayload);
 
     return { code: 200, user: user };
   } catch (err) {
@@ -130,8 +138,8 @@ exports.RecoverPassword = async (
     // Update the user's password in the database
     await User.updateOne({ email }, { password: hashedPassword });
 
-    if(user?.isEmployee){
-      const eventPayload : IEvent<UserEmployeePasswordChange> = {
+    if (user?.isEmployee) {
+      const eventPayload: IEvent<UserEmployeePasswordChange> = {
         sender: "usuarios",
         created_at: Date.now(),
         event_name: "user_employee_password_change",
@@ -140,10 +148,14 @@ exports.RecoverPassword = async (
           newPassword: newPassword,
           email: user?.email,
           dni: user?.dni,
-        }
-      }
+        },
+      };
       const eda = EDA.getInstance();
-      eda.publishMessage("/app/send/usuarios", "user_employee_password_change",eventPayload )
+      eda.publishMessage(
+        "/app/send/usuarios",
+        "user_employee_password_change",
+        eventPayload
+      );
     }
     // Send the new password to the user's email
     // (code for sending email not included)
