@@ -1,14 +1,18 @@
-import { IUserProfileUpdate, IUserRegister } from "../Models/types";
+import Supplier from "../Models/supplier.model";
+import { IEmployee, IEvent, IUserProfileUpdate, IUserRegister, UserEmployeePasswordChange, createUserEmployeePayload, createUserEventPayload } from "../Models/types";
 import User from "../Models/user.model";
 const bcrypt = require("bcrypt");
-import multer from "multer";
 import cloudinaryService from "./CloudinaryService";
+import { EDA } from "./EDA/EdaIntegrator";
+import { UserSupplierCount } from "./SupplierService";
 
 exports.Register = async ({
   name,
   email,
+  dni,
+  address,
+  phone,
   password,
-  isProvider,
 }: IUserRegister) => {
   try {
     let user = await User.findOne({ email }).lean();
@@ -20,21 +24,59 @@ exports.Register = async ({
     const NewUser = new User({
       name,
       email,
-      isProvider,
+      dni,
+      address,
+      phone,
       createdOn: Date.now(),
     });
     const salt = await bcrypt.genSalt(10);
     NewUser.password = await bcrypt.hash(password, salt);
-
+    const eda = EDA.getInstance();
     await NewUser.save();
+
+    const newUserEvent: createUserEventPayload = {
+      username: NewUser.name,
+      password: password,
+      name: NewUser.name,
+      email: NewUser.email,
+      document: NewUser.dni,
+      address: NewUser.address ? NewUser.address : "",
+    };
+    
+    //Guild 2 Use Case
+    eda.publishMessage<createUserEventPayload>(
+      "/app/send/usuarios",
+      "new_user_create",
+      newUserEvent
+    );
+
+    //Guild 5.
+    //User/Supplier Count. 
+
+    const userCount = await User.countDocuments();
+    const supplierCount = await Supplier.countDocuments();
+
+    const userSupplierCount: UserSupplierCount = {
+      userCount,
+      supplierCount,
+    };
+    eda.publishMessage<UserSupplierCount>("/app/send/usuarios", "user_supplier_count", userSupplierCount);
+    //END Guild 5.  
 
     return {
       code: 200,
       payload: {
         name: NewUser.name,
         email: NewUser.email,
-        isProvider: NewUser.isProvider,
+        dni: NewUser.dni,
+        address: NewUser.address,
+        phone: NewUser.phone,
         createdOn: NewUser.createdOn,
+        isProvider: NewUser.isProvider,
+        isEmployee: NewUser.isEmployee,
+        group: NewUser.group,
+        discount: NewUser.discount,
+        vip: NewUser.vip,
       },
     };
   } catch (error) {
@@ -42,7 +84,14 @@ exports.Register = async ({
   }
 };
 
-exports.UpdateUser = async ({ email, name, password }: IUserProfileUpdate) => {
+exports.UpdateUser = async ({
+  email,
+  name,
+  dni,
+  address,
+  phone,
+  password,
+}: IUserProfileUpdate) => {
   try {
     let user = await User.findOne({ email }).lean();
 
@@ -54,6 +103,18 @@ exports.UpdateUser = async ({ email, name, password }: IUserProfileUpdate) => {
 
     if (name && name.trim() !== "") {
       updateFields.name = name;
+    }
+
+    if (dni && dni.trim() !== "") {
+      updateFields.dni = dni;
+    }
+
+    if (address && address.trim() !== "") {
+      updateFields.address = address;
+    }
+
+    if (phone && phone.trim() !== "") {
+      updateFields.phone = phone;
     }
 
     // Check if password is provided and is not an empty string
@@ -76,12 +137,36 @@ exports.UpdateUser = async ({ email, name, password }: IUserProfileUpdate) => {
       { new: true }
     ).lean();
 
+    if(password && password.trim() !== "" && user?.isEmployee){
+      const eventPayload : IEvent<UserEmployeePasswordChange> = {
+        sender: "usuarios",
+        created_at: Date.now(),
+        event_name: "user_employee_password_change",
+        data: {
+          username: user?.name,
+          newPassword: password,
+          email: user?.email,
+          dni: user?.dni,
+        }
+      }
+      const eda = EDA.getInstance();
+      eda.publishMessage("/app/send/usuarios", "user_employee_password_change",eventPayload )
+    }
+
     return {
       code: 200,
       payload: {
         name: user?.name,
         email: user?.email,
+        dni: user?.dni,
+        address: user?.address,
+        phone: user?.phone,
         profilePicture: user?.profilePicture,
+        isProvider: user?.isProvider,
+        isEmployee: user?.isEmployee,
+        group: user?.group,
+        discount: user?.discount,
+        vip: user?.vip,
       },
     };
   } catch (error) {
@@ -120,9 +205,77 @@ export const updateUserProfilePicture = async (
 
 exports.DeleteUser = async (email: string) => {
   try {
-    let user = await User.deleteOne({ email }).lean();
+    await User.deleteOne({ email }).lean();
     return { code: 200, message: "User Deleted" };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }
 };
+
+exports.GetUserByEmail = async (email: string) => {
+  try {
+    let user = await User.findOne({ email }).lean();
+    return { code: 200, user: user };
+  } catch (error) {
+    return { code: 500, message: "Internal Server Error" };
+  }
+};
+
+export const GetUserCount = async () => {
+  try {
+    const count = await User.countDocuments();
+    return { code: 200, count: count };
+  } catch (error) {
+    return { code: 500, message: "Internal Server Error" };
+  }
+}
+
+exports.CreateUserFromEmployee = async (employee : IEmployee) => {
+  try{
+    const isCeo = employee.grupo === "509";
+
+    const NewUser = new User({
+      name: employee.username,
+      email: employee.username,
+      dni: employee.carLicense,
+      address: "",
+      phone: "",
+      createdOn: Date.now(),
+      password: employee.password,
+      isProvider: false,
+      isEmployee: true,
+      group : employee.grupo,
+      discount : isCeo? 60 : 30,
+      vip : isCeo? true : false,
+    });
+    
+    const salt = await bcrypt.genSalt(10);
+    NewUser.password = await bcrypt.hash(NewUser.password, salt);
+    await NewUser.save(); 
+
+    const eventPayload : IEvent<createUserEmployeePayload> = {
+      sender: "usuarios",
+      created_at: Date.now(),
+      event_name: "new_user_employee_create",
+      data: {
+        name: NewUser.name,
+        email: NewUser.email,
+        dni: NewUser.dni,
+        address: NewUser.address ? NewUser.address : "",
+        phone: NewUser.phone ? NewUser.phone : "",
+        createdOn: NewUser.createdOn,
+        password: NewUser.password,
+        discount : NewUser.discount ? NewUser.discount : 0,
+        vip : NewUser.vip ? NewUser.vip : false,
+      }
+    }
+
+    const eda = EDA.getInstance();
+    eda.publishMessage("/app/send/usuarios", "new_user_employee_create", NewUser);
+
+    return { code: 200, message: "User created" };
+  }catch(error){
+    return { code: 500, message: "Internal Server Error" };
+  }
+}
+

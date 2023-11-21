@@ -1,0 +1,16 @@
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700573319374,\"event_name\":\"new_user_create\",\"data\":{\"username\":\"admin\",\"password\":\"admin\",\"nombre\":\"admin\",\"apellido\":\"admin\",\"email\":\"admin@admin.com\",\"carLicense\":\"admin\",\"grupo\":\"500\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700573447122,\"event_name\":\"new_user_create\",\"data\":{\"username\":\"admin\",\"password\":\"admin\",\"nombre\":\"admin\",\"apellido\":\"admin\",\"email\":\"admin@admin.com\",\"carLicense\":\"admin\",\"grupo\":\"500\"}}","from":"/topic/usuarios"}
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"message\":\"test\"}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700574746965,\"event_name\":\"new_user_create\",\"data\":{\"username\":\"admin\",\"password\":\"admin\",\"nombre\":\"admin\",\"apellido\":\"admin\",\"email\":\"admin@admin.com\",\"carLicense\":\"admin\",\"grupo\":\"500\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700578228184,\"event_name\":\"new_purchase\",\"data\":{\"product_name\":\"Coca Cola\",\"product_price\":100,\"product_amount\":2,\"product_marketplace\":\"Mercado Libre\",\"product_marketplace_cuit\":\"123456789\",\"delivery_lot\":\"1\",\"user_info\":{\"name\":\"Juan\",\"email\":\"JuanPerez@perez.com\",\"document\":\"12345678\",\"direction\":\"Calle falsa 123\"},\"purchase_id\":\"1\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700578409035,\"event_name\":\"new_purchase\",\"data\":{\"product_name\":\"Coca Cola\",\"product_price\":100,\"product_amount\":2,\"product_marketplace\":\"Mercado Libre\",\"product_marketplace_cuit\":\"123456789\",\"delivery_lot\":\"1\",\"user_info\":{\"name\":\"Juan\",\"email\":\"JuanPerez@perez.com\",\"document\":\"12345678\",\"direction\":\"Calle falsa 123\"},\"purchase_id\":\"1\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700578594284,\"event_name\":\"delivery_update\",\"data\":{\"purchase_id\":\"1\",\"status\":\"delivered\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700578635425,\"event_name\":\"delivery_update\",\"data\":{\"purchase_id\":\"1\",\"status\":\"delivered\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700578679468,\"event_name\":\"delivery_update\",\"data\":{\"purchase_id\":\"1\",\"status\":\"delivered\"}}","from":"/topic/usuarios"}
+{"content":"{\"sender\":\"usuarios\",\"created_at\":1700578829318,\"event_name\":\"delivery_successful\",\"data\":{\"purchase_id\":\"1\",\"status\":\"delivered\",\"deliveryDate\":\"2021-06-30T03:00:00.000Z\",\"requestDate\":\"2021-06-30T03:00:00.000Z\"}}","from":"/topic/usuarios"}

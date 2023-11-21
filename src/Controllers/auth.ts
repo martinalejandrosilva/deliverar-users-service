@@ -1,6 +1,9 @@
 import { Body, Path, Post, Route, Tags } from "tsoa";
-import { IUserAuthenticate } from "../Services/AuthService";
-import { IUserAuthenticated } from "../Models/types";
+import {
+  AuthenticateSupplier,
+  IUserAuthenticate,
+} from "../Services/AuthService";
+import { ISupplier, IUserAuthenticated } from "../Models/types";
 const AuthService = require("../Services/AuthService");
 const config = require("config");
 const jwt = require("jsonwebtoken");
@@ -9,6 +12,13 @@ export type AuthenticatedResponse = {
   code: number;
   token?: string;
   user?: IUserAuthenticated;
+  message?: string;
+};
+
+export type AuthenticatedSupplierResponse = {
+  code: number;
+  token?: string;
+  supplier?: ISupplier;
   message?: string;
 };
 
@@ -44,6 +54,37 @@ export default class AuthController {
       return { code: user.code, token: token, user: user.user };
     }
     return { code: user.code, message: user.message };
+  }
+
+  /**
+   * Authenticate a supplier.
+   * @param cuit The supplier cuit.
+   * @param password The supplier password.
+   * @returns The supplier data.
+   */
+  @Post("/login-supplier")
+  public async loginSupplier(
+    @Body() { cuit, password }: AuthenticateSupplier
+  ): Promise<AuthenticatedSupplierResponse> {
+    const supplier = await AuthService.AuthenticateSupplier({ cuit, password });
+    if (supplier.code === 200) {
+      const token = await new Promise<string | undefined>((resolve, reject) => {
+        jwt.sign(
+          supplier.supplier,
+          config.get("jwtSecret"),
+          { expiresIn: 3600 },
+          (err: any, token: string | undefined) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(token);
+            }
+          }
+        );
+      });
+      return { code: supplier.code, token: token, supplier: supplier.supplier };
+    }
+    return { code: supplier.code, message: supplier.message };
   }
 
   /**

@@ -26,6 +26,32 @@
 					},
 					"payload": {
 						"properties": {
+							"vip": {
+								"type": "boolean"
+							},
+							"discount": {
+								"type": "number",
+								"format": "double"
+							},
+							"group": {
+								"type": "string"
+							},
+							"phone": {
+								"type": "string"
+							},
+							"address": {
+								"type": "string"
+							},
+							"isEmployee": {
+								"type": "boolean"
+							},
+							"dni": {
+								"type": "string"
+							},
+							"createdOn": {
+								"type": "string",
+								"format": "date-time"
+							},
 							"profilePicture": {
 								"type": "string"
 							},
@@ -65,28 +91,42 @@
 					"email": {
 						"type": "string"
 					},
-					"password": {
+					"dni": {
 						"type": "string"
 					},
-					"isProvider": {
-						"type": "boolean"
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"name",
 					"email",
-					"password",
-					"isProvider"
+					"password"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"IUserProfileUpdate": {
 				"properties": {
+					"name": {
+						"type": "string"
+					},
 					"email": {
 						"type": "string"
 					},
-					"name": {
+					"dni": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
 						"type": "string"
 					},
 					"password": {
@@ -110,12 +150,24 @@
 					"profilePicture": {
 						"type": "string"
 					},
-					"isProvider": {
-						"type": "boolean"
-					},
 					"createdOn": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"dni": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"isProvider": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -159,6 +211,280 @@
 				"required": [
 					"email",
 					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplier": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"cuit": {
+						"type": "string"
+					},
+					"domain": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"primaryColor": {
+						"type": "string"
+					},
+					"secondaryColor": {
+						"type": "string"
+					},
+					"coverPhoto": {
+						"type": "string"
+					},
+					"logo": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"isProvider": {
+						"type": "boolean"
+					},
+					"createdOn": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"businessName",
+					"cuit",
+					"domain",
+					"address",
+					"phone",
+					"category",
+					"email",
+					"primaryColor",
+					"secondaryColor",
+					"password",
+					"isProvider",
+					"createdOn"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthenticatedSupplierResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"supplier": {
+						"$ref": "#/components/schemas/ISupplier"
+					},
+					"token": {
+						"type": "string"
+					},
+					"code": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object"
+			},
+			"AuthenticateSupplier": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"cuit": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"cuit"
+				],
+				"type": "object"
+			},
+			"ISupplierResponse": {
+				"properties": {
+					"code": {
+						"type": "number",
+						"format": "double"
+					},
+					"token": {
+						"type": "string"
+					},
+					"payload": {
+						"$ref": "#/components/schemas/ISupplier"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplierRegister": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"cuit": {
+						"type": "string"
+					},
+					"domain": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"primaryColor": {
+						"type": "string"
+					},
+					"secondaryColor": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"businessName",
+					"cuit",
+					"domain",
+					"address",
+					"phone",
+					"category",
+					"email",
+					"primaryColor",
+					"secondaryColor",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISupplierUpdate": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"cuit": {
+						"type": "string"
+					},
+					"domain": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"primaryColor": {
+						"type": "string"
+					},
+					"secondaryColor": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"cuit"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"deliveryStatus": {
+				"type": "string",
+				"enum": [
+					"waiting_for_package",
+					"waiting_for_robot",
+					"on_transit",
+					"delivered"
+				]
+			},
+			"IOrder": {
+				"properties": {
+					"productName": {
+						"type": "string"
+					},
+					"productPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"productQuantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"marketplace": {
+						"type": "string"
+					},
+					"purchaseId": {
+						"type": "string"
+					},
+					"userEmail": {
+						"type": "string"
+					},
+					"userDni": {
+						"type": "string"
+					},
+					"deliveryStatus": {
+						"$ref": "#/components/schemas/deliveryStatus"
+					},
+					"orderDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deliveryDate": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"productName",
+					"productPrice",
+					"productQuantity",
+					"marketplace",
+					"purchaseId",
+					"userEmail",
+					"userDni"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -398,6 +724,39 @@
 				}
 			}
 		},
+		"/api/auth/login-supplier": {
+			"post": {
+				"operationId": "LoginSupplier",
+				"responses": {
+					"200": {
+						"description": "The supplier data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthenticatedSupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Authenticate a supplier.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AuthenticateSupplier"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/auth/password-recovery/{email}": {
 			"post": {
 				"operationId": "Recovery",
@@ -418,6 +777,300 @@
 					"Auth"
 				],
 				"security": [],
+				"parameters": [
+					{
+						"description": "The user email.",
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/supplier": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "The supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Register a new supplier.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "The supplier registration data.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISupplierRegister",
+								"description": "The supplier registration data."
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "The updated supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates supplier information.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The supplier update data.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISupplierUpdate",
+								"description": "The supplier update data."
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/supplier/logo/{cuit}": {
+			"put": {
+				"operationId": "UpdateLogo",
+				"responses": {
+					"200": {
+						"description": "The updated supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates supplier logo.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The supplier CUIT.",
+						"in": "path",
+						"name": "cuit",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"logo": {
+										"type": "string",
+										"format": "binary",
+										"description": "The supplier's new logo."
+									}
+								},
+								"required": [
+									"logo"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/supplier/coverPhoto/{cuit}": {
+			"put": {
+				"operationId": "UpdateCoverPhoto",
+				"responses": {
+					"200": {
+						"description": "The updated supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Updates supplier cover photo.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The supplier CUIT.",
+						"in": "path",
+						"name": "cuit",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"coverPhoto": {
+										"type": "string",
+										"format": "binary",
+										"description": "The supplier's new cover photo."
+									}
+								},
+								"required": [
+									"coverPhoto"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/supplier/{cuit}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Status code of operation.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Deletes supplier account.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The supplier cuit.",
+						"in": "path",
+						"name": "cuit",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "The supplier data with status code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISupplierResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves supplier information.",
+				"tags": [
+					"Supplier"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The supplier cuit.",
+						"in": "path",
+						"name": "cuit",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/order/{email}": {
+			"get": {
+				"operationId": "GetOrders",
+				"responses": {
+					"200": {
+						"description": "The user orders.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IOrder"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all orders for a user.",
+				"tags": [
+					"Order"
+				],
+				"security": [
+					{
+						"BearerAuth": []
+					}
+				],
 				"parameters": [
 					{
 						"description": "The user email.",

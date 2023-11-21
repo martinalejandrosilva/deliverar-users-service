@@ -1,0 +1,24 @@
+name: Deploy on Tag
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Debug
+        run: |
+          ls -la
+
+      - name: Copia archivos
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: "userprod-b1.deliver.ar"
+          username: "ubuntu"
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: "/home/ubuntu/nrelease"

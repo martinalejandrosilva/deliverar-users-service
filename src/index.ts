@@ -7,19 +7,26 @@ const cors = require("cors");
 import session from "express-session";
 import passport from "passport";
 import "./Services/passportSetup";
+import { EDA } from "./Services/EDA/EdaIntegrator";
+import {
+  IDelivery,
+  IDeliveryUpdate,
+  IEmployee,
+  IEvent,
+  INewPurchase,
+} from "./Models/types";
 
 const PORT = process.env.PORT ?? 8000;
 
 const app: Application = express();
 app.use(cors());
-
 //Connect to Database.
 connectDB();
 
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(express.static("public"));
-
+//Yo me suscribo a la cola de usuarios ahi me van a llegar todos los topics relevantes.
 app.use(
   "/swagger",
   swaggerUi.serve,
@@ -37,6 +44,10 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+const eda = EDA.getInstance();
+
+//remove
 
 app.use(passport.initialize());
 app.use(passport.session());

@@ -1,0 +1,2 @@
+{"content":"{\"sender\":\"marketplace\",\"event_name\":\"new_purchase\",\"date\":\"1700572752417\",\"data\":{\"user_id\":1,\"amount\":100,\"currency\":\"USD\"}}","from":"/topic/marketplace"}
+{"content":"{\"sender\":\"marketplace\",\"event_name\":\"new_purchase\",\"created_at\":\"1700572752417\",\"data\":{\"user_id\":1,\"amount\":100,\"currency\":\"USD\"}}","from":"/topic/marketplace"}
