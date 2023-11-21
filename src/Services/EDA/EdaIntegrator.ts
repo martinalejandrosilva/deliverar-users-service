@@ -1,6 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import { WebSocket } from "ws";
-import { EventName, IEvent } from "../../Models/types";
+import { EventName, IEmployee, IEvent } from "../../Models/types";
 import { eventNames } from "process";
 import { adminPersonalHandler } from "./handlers/adminPersonalHandler";
 import { robotsHandler } from "./handlers/robotsHandler";
@@ -142,24 +142,25 @@ export class EDA {
         this.isConnected = true;
 
         this.client.subscribe("/topic/usuarios", (message) => {
+          robotsHandler(message.body);
           this.process_usuarios(message.body);
         });
 
         this.client.subscribe("/topic/admin-personal", (message) => {
           console.log("Admin Personal");
-          //adminPersonalHandler(message.body);
+          adminPersonalHandler(message.body);
           this.process_admin_personal(message.body);
         });
 
         this.client.subscribe("/topic/robots", (message) => {
           console.log("Robots");
-          //robotsHandler(message.body);
+          robotsHandler(message.body);
           this.process_robots(message.body);
         });
 
         this.client.subscribe("/topic/marketplace", (message) => {
           console.log("Marketplace");
-          //marketplaceHandler(message.body);
+          marketplaceHandler(message.body);
           this.process_marketplace(message.body);
         });
 

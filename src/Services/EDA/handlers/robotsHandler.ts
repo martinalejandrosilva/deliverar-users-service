@@ -35,7 +35,7 @@ export const robotsHandler = (data: string) => {
 
 const robotsHandleEvent = (orderToUpdate: OrderUpdate) => {
   try {
-    OrderService.CreateRobotFromEmployee(orderToUpdate);
+    OrderService.UpdateOrder(orderToUpdate);
   } catch (error) {
     console.log(error);
   }
