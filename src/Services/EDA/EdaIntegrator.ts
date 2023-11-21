@@ -1,6 +1,8 @@
 import { Client } from "@stomp/stompjs";
 import { WebSocket } from "ws";
-import { IEvent } from "../../Models/types";
+import { EventName, IEvent } from "../../Models/types";
+import { eventNames } from "process";
+import { adminPersonalHandler } from "./handlers/adminPersonalHandler";
 let fs = require("fs");
 Object.assign(global, { WebSocket });
 
@@ -31,18 +33,20 @@ export class EDA {
     console.log("Finished EDA init...");
   }
 
-  public publishMessage<T>(topic: string, message: T) {
+ 
+
+  public publishMessage<T>(topic: string , eventName: EventName ,message: T) {
     const event: IEvent<T> = {
       sender: "usuarios",
-      created_at: new Date(),
-      event_name: "new_user_create",
+      created_at: Date.now(),
+      event_name: eventName,
       data: message,
     };
 
     if (this.client.connected) {
       this.client.publish({
         destination: topic,
-        body: JSON.stringify(message),
+        body: JSON.stringify(event),
       });
     } else {
       this.messageQueue.push({ topic, message });
@@ -71,11 +75,12 @@ export class EDA {
     });
   }
   private process_admin_personal(data: string) {
-    fs.appendFile("logs.txt", data + "\n", function (err: { message: string }) {
+    fs.appendFile("AdminDePersonal.txt", data + "\n", function (err: { message: string }) {
       if (err) {
         console.log("EDA Adm. Personal error" + err.message);
       }
     });
+    
   }
 
   // Vamos a quedarnos escuchando las diferentes colas aca
@@ -89,12 +94,18 @@ export class EDA {
         this.processMessageQueue();
 
         let sub_usuarios = this.client.subscribe("/topic/usuarios", (message) =>
-          this.process_usuarios(message.body)
+          {
+            adminPersonalHandler(message.body); //remove
+            this.process_usuarios(message.body)
+          }
         );
 
         let sub_adm_pesonal = this.client.subscribe(
           "/topic/admin-personal",
-          (message) => this.process_admin_personal(message.body)
+          (message) => {
+            adminPersonalHandler(message.body);
+            this.process_admin_personal(message.body)
+          }
         );
       },
       onDisconnect: () => {
@@ -107,3 +118,4 @@ export class EDA {
     });
   }
 }
+

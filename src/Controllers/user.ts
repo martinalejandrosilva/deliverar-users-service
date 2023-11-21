@@ -22,6 +22,14 @@ interface IUserResponse {
     email: string;
     isProvider: boolean;
     profilePicture?: string;
+    createdOn?: Date;
+    dni?: string;
+    isEmployee?: boolean;
+    address?: string;
+    phone?: string;
+    group?: string;
+    discount?: number;
+    vip?: boolean;
   };
 }
 

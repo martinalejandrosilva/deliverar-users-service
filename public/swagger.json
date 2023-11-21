@@ -26,6 +26,32 @@
 					},
 					"payload": {
 						"properties": {
+							"vip": {
+								"type": "boolean"
+							},
+							"discount": {
+								"type": "number",
+								"format": "double"
+							},
+							"group": {
+								"type": "string"
+							},
+							"phone": {
+								"type": "string"
+							},
+							"address": {
+								"type": "string"
+							},
+							"isEmployee": {
+								"type": "boolean"
+							},
+							"dni": {
+								"type": "string"
+							},
+							"createdOn": {
+								"type": "string",
+								"format": "date-time"
+							},
 							"profilePicture": {
 								"type": "string"
 							},
@@ -232,6 +258,10 @@
 					},
 					"isProvider": {
 						"type": "boolean"
+					},
+					"createdOn": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
@@ -246,7 +276,8 @@
 					"primaryColor",
 					"secondaryColor",
 					"password",
-					"isProvider"
+					"isProvider",
+					"createdOn"
 				],
 				"type": "object",
 				"additionalProperties": false

@@ -15,6 +15,7 @@ const supplierSchema = new Schema({
   logo: { type: String, required: false },
   password: { type: String, required: true },
   isProvider: { type: Boolean, default: true },
+  createdOn: { type: Date, default: Date.now },
 });
 
 const Supplier = mongoose.model("Supplier", supplierSchema);

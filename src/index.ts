@@ -7,6 +7,8 @@ const cors = require("cors");
 import session from "express-session";
 import passport from "passport";
 import "./Services/passportSetup";
+import { EDA } from "./Services/EDA/EdaIntegrator";
+import { IEmployee, IEvent } from "./Models/types";
 
 const PORT = process.env.PORT ?? 8000;
 
@@ -36,6 +38,27 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+const eda = EDA.getInstance();
+
+//remove 
+
+const data  : IEvent<IEmployee> = {
+  sender: "usuarios",
+  created_at: Date.now(),
+  event_name: "new_user_create",
+  data: {
+   username: "admin",
+    password: "admin",
+    nombre: "admin",
+    apellido: "admin",
+    email: "admin@admin.com",
+    carLicense : "admin",
+    grupo : "500",
+  },
+};
+
+//eda.publishMessage("/app/send/usuarios", "new_user_create", data);
 
 app.use(passport.initialize());
 app.use(passport.session());

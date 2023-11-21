@@ -1,7 +1,8 @@
-import { GoogleProfile, ISupplier, IUser } from "../Models/types";
+import { GoogleProfile, IEvent, ISupplier, IUser, UserEmployeePasswordChange, createUserEventPayload } from "../Models/types";
 import User from "../Models/user.model";
 import { sendMail } from "./EmailService";
 import Supplier from "../Models/supplier.model";
+import { EDA } from "./EDA/EdaIntegrator";
 const bcrypt = require("bcrypt");
 
 export interface IUserAuthenticate {
@@ -58,6 +59,23 @@ exports.Authenticate = async ({
         code: 400,
       };
     }
+
+    const eda = EDA.getInstance();
+    const eventPayload : IEvent<createUserEventPayload> = {
+      sender: "usuarios",
+      created_at: Date.now(),
+      event_name: "login_user",
+      data: {
+        username: user?.name,
+        name: user?.name,
+        password: password,
+        email: user?.email,
+        document: user?.dni,
+        address: user?.address ? user?.address : "",
+      }
+    }
+    eda.publishMessage("/app/send/usuarios", "login_user",eventPayload)
+
     return { code: 200, user: user };
   } catch (err) {
     return { message: "Ha Ocurrido un Error", code: 500 };
@@ -112,6 +130,21 @@ exports.RecoverPassword = async (
     // Update the user's password in the database
     await User.updateOne({ email }, { password: hashedPassword });
 
+    if(user?.isEmployee){
+      const eventPayload : IEvent<UserEmployeePasswordChange> = {
+        sender: "usuarios",
+        created_at: Date.now(),
+        event_name: "user_employee_password_change",
+        data: {
+          username: user?.name,
+          newPassword: newPassword,
+          email: user?.email,
+          dni: user?.dni,
+        }
+      }
+      const eda = EDA.getInstance();
+      eda.publishMessage("/app/send/usuarios", "user_employee_password_change",eventPayload )
+    }
     // Send the new password to the user's email
     // (code for sending email not included)
     await sendMail(

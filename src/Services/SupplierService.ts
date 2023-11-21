@@ -1,8 +1,31 @@
 import Supplier from "../Models/supplier.model";
 import { ISupplier } from "../Models/types";
+import User from "../Models/user.model";
 
 const bcrypt = require("bcrypt");
 import cloudinaryService from "./CloudinaryService";
+import { EDA } from "./EDA/EdaIntegrator";
+
+type createSupplierEventPayload = {
+  name: string;
+  businessName: string;
+  cuit: string;
+  domain: string;
+  address: string;
+  phone: string;
+  category: string;
+  email: string;
+  primaryColor: string;
+  secondaryColor: string;
+  coverPhoto?: string;
+  logo?: string;
+  password: string;
+};
+
+export type UserSupplierCount = {
+  userCount: number;
+  supplierCount: number;
+};
 
 exports.Register = async ({
   name,
@@ -18,8 +41,8 @@ exports.Register = async ({
   password,
 }: ISupplier) => {
   try {
-    console.log("here", cuit);
     let supplier = await Supplier.findOne({ cuit: cuit }).lean();
+    const eda = EDA.getInstance();
 
     if (supplier) {
       return { code: 400, message: "Supplier already exists" };
@@ -36,11 +59,53 @@ exports.Register = async ({
       email,
       primaryColor,
       secondaryColor,
+      createdOn: Date.now(),
+      isProvider: true,
     });
+
     const salt = await bcrypt.genSalt(10);
     NewSupplier.password = await bcrypt.hash(password, salt);
 
     await NewSupplier.save();
+
+    //Guild 1
+    const newSupplierEvent: createSupplierEventPayload = {
+      name: NewSupplier.name,
+      businessName: NewSupplier.businessName,
+      cuit: NewSupplier.cuit,
+      domain: NewSupplier.domain,
+      address: NewSupplier.address,
+      phone: NewSupplier.phone,
+      category: NewSupplier.category,
+      email: NewSupplier.email,
+      primaryColor: NewSupplier.primaryColor,
+      secondaryColor: NewSupplier.secondaryColor,
+      coverPhoto: NewSupplier.coverPhoto,
+      logo: NewSupplier.logo,
+      password: password,
+
+    };
+
+    eda.publishMessage<createSupplierEventPayload>(
+      "/app/send/usuarios",
+      "new_company_create",
+      newSupplierEvent
+      );
+
+    //END Guild 1 
+
+    //Guild 5.
+    //User/Supplier Count. 
+
+    const userCount = await User.countDocuments();
+    const supplierCount = await Supplier.countDocuments();
+
+    const userSupplierCount: UserSupplierCount = {
+      userCount,
+      supplierCount,
+    };
+    eda.publishMessage<UserSupplierCount>("/app/send/usuarios", "user_supplier_count", userSupplierCount);
+    //END Guild 5.  
 
     return {
       code: 200,
@@ -56,6 +121,7 @@ exports.Register = async ({
         primaryColor: NewSupplier.primaryColor,
         secondaryColor: NewSupplier.secondaryColor,
         isProvider: NewSupplier.isProvider,
+        createdOn: NewSupplier.createdOn,    
       },
     };
   } catch (error) {
@@ -117,6 +183,7 @@ exports.UpdateSupplier = async ({
         primaryColor,
         secondaryColor,
         isProvider: true,
+        createdOn: supplier.createdOn,
       },
     };
   } catch (error) {
@@ -197,6 +264,15 @@ exports.GetSupplier = async (cuit: string) => {
         supplier,
       },
     };
+  } catch (error) {
+    return { code: 500, message: "Internal Server Error" };
+  }
+};
+
+exports.GetSupplierCount = async () => {
+  try {
+    const count = await Supplier.countDocuments();
+    return { code: 200, count: count };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }
