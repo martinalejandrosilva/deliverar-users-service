@@ -3,6 +3,8 @@ import { WebSocket } from "ws";
 import { EventName, IEvent } from "../../Models/types";
 import { eventNames } from "process";
 import { adminPersonalHandler } from "./handlers/adminPersonalHandler";
+import { robotsHandler } from "./handlers/robotsHandler";
+import { marketplaceHandler } from "./handlers/marketplaceHandler";
 let fs = require("fs");
 Object.assign(global, { WebSocket });
 
@@ -20,7 +22,7 @@ export class EDA {
   public static getInstance(): EDA {
     if (!this.instance) {
       this.instance = new EDA();
-      this.instance.initialize(); // Optionally, initialize here or externally
+      this.instance.initialize();
     }
     return this.instance;
   }
@@ -42,6 +44,7 @@ export class EDA {
     };
 
     if (this.client.connected) {
+      console.log("Publishing message to topic", topic);
       this.client.publish({
         destination: topic,
         body: JSON.stringify(event),
@@ -57,10 +60,15 @@ export class EDA {
       if (dequeuedItem) {
         // Check if dequeuedItem is not undefined
         const { topic, message } = dequeuedItem;
-        this.client.publish({
-          destination: topic,
-          body: JSON.stringify(message),
-        });
+        console.log("Publishing message to topiccccc", topic);
+        try {
+          this.client.publish({
+            destination: topic,
+            body: JSON.stringify(message),
+          });
+        } catch (err) {
+          console.log("Error en el publish");
+        }
       }
     }
   }
@@ -72,7 +80,9 @@ export class EDA {
       }
     });
   }
+
   private process_admin_personal(data: string) {
+    console.log("Admin Personal");
     fs.appendFile(
       "AdminDePersonal.txt",
       data + "\n",
@@ -84,32 +94,82 @@ export class EDA {
     );
   }
 
+  private process_robots(data: string) {
+    fs.appendFile(
+      "robots.txt",
+      data + "\n",
+      function (err: { message: string }) {
+        if (err) {
+          console.log("EDA Robots error" + err.message);
+        }
+      }
+    );
+  }
+
+  private process_core_bancario(data: string) {
+    fs.appendFile(
+      "logsBancario.txt",
+      data + "\n",
+      function (err: { message: string }) {
+        if (err) {
+          console.log("EDA Core Bancario error" + err.message);
+        }
+      }
+    );
+  }
+
+  private process_marketplace(data: string) {
+    fs.appendFile(
+      "marketplace.txt",
+      data + "\n",
+      function (err: { message: string }) {
+        if (err) {
+          console.log("EDA Marketplace error" + err.message);
+        }
+      }
+    );
+  }
+
   // Vamos a quedarnos escuchando las diferentes colas aca
   // Como no sabemos la info que nos va a llegar, vamos a meter todos los mensajes
   // en un archivo hasta que sepamos procesarlos todos
   private eda_init() {
+    console.log("Eda Init function....");
     this.client = new Client({
       brokerURL: this.brokerURL,
       onConnect: (frame) => {
+        console.log("Connected to websocket");
         this.isConnected = true;
+
+        this.client.subscribe("/topic/usuarios", (message) => {
+          this.process_usuarios(message.body);
+        });
+
+        this.client.subscribe("/topic/admin-personal", (message) => {
+          console.log("Admin Personal");
+          //adminPersonalHandler(message.body);
+          this.process_admin_personal(message.body);
+        });
+
+        this.client.subscribe("/topic/robots", (message) => {
+          console.log("Robots");
+          //robotsHandler(message.body);
+          this.process_robots(message.body);
+        });
+
+        this.client.subscribe("/topic/marketplace", (message) => {
+          console.log("Marketplace");
+          //marketplaceHandler(message.body);
+          this.process_marketplace(message.body);
+        });
+
+        this.client.subscribe("/topic/core-bancario", (message) =>
+          this.process_core_bancario(message.body)
+        );
+
         this.processMessageQueue();
-
-        let sub_usuarios = this.client.subscribe(
-          "/topic/usuarios",
-          (message) => {
-            adminPersonalHandler(message.body); //remove
-            this.process_usuarios(message.body);
-          }
-        );
-
-        let sub_adm_pesonal = this.client.subscribe(
-          "/topic/admin-personal",
-          (message) => {
-            adminPersonalHandler(message.body);
-            this.process_admin_personal(message.body);
-          }
-        );
       },
+
       onDisconnect: () => {
         console.log("Disconnected from websocket");
       },

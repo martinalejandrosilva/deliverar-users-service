@@ -41,24 +41,24 @@ app.use(
 
 const eda = EDA.getInstance();
 
-//remove 
+//remove
 
-const data  : IEvent<IEmployee> = {
+const data: IEvent<IEmployee> = {
   sender: "usuarios",
   created_at: Date.now(),
   event_name: "new_user_create",
   data: {
-   username: "admin",
+    username: "admin",
     password: "admin",
     nombre: "admin",
     apellido: "admin",
     email: "admin@admin.com",
-    carLicense : "admin",
-    grupo : "500",
+    carLicense: "admin",
+    grupo: "500",
   },
 };
 
-//eda.publishMessage("/app/send/usuarios", "new_user_create", data);
+eda.publishMessage("/app/send/usuarios", "new_user_create", data);
 
 app.use(passport.initialize());
 app.use(passport.session());
