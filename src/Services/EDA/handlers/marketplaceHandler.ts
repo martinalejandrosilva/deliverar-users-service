@@ -35,9 +35,22 @@ const mapPurchaseToOrder = (purchase: INewPurchase) => {
     productPrice: purchase.product_price,
     productQuantity: purchase.product_amount,
     marketplace: purchase.product_marketplace,
+    cuit: formatCUIT(purchase.product_marketplace_cuit),
     purchaseId: purchase.purchase_id,
     userEmail: purchase.user_info.email,
     userDni: purchase.user_info.document,
   };
   return order;
 };
+
+function formatCUIT(cuit: string): string {
+  if (cuit.length !== 11) {
+    throw new Error("Invalid CUIT length");
+  }
+
+  if (cuit.includes("-")) {
+    return cuit;
+  } else {
+    return cuit.replace(/(?<=...)(?=...)/g, "-");
+  }
+}

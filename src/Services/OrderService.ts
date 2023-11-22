@@ -16,6 +16,7 @@ exports.UpdateOrder = async ({
   productPrice,
   productQuantity,
   marketplace,
+  cuit,
   purchaseId,
   userEmail,
   userDni,
@@ -33,6 +34,7 @@ exports.UpdateOrder = async ({
           ...(productPrice && { productPrice }),
           ...(productQuantity && { productQuantity }),
           ...(marketplace && { marketplace }),
+          ...(cuit && { cuit }),
           ...(userEmail && { userEmail }),
           ...(userDni && { userDni }),
           ...(deliveryStatus && { deliveryStatus }),
@@ -57,6 +59,15 @@ exports.getOrdersByUser = async (userEmail: string) => {
   try {
     const order = await Order.find({ userEmail }).lean();
     return { code: 200, payload: order };
+  } catch (error) {
+    return { code: 500, message: "Internal Server Error" };
+  }
+};
+
+exports.getOrdersBySupplier = async (supplierCuit: string) => {
+  try {
+    const orders = await Order.find({ cuit: supplierCuit }).lean();
+    return { code: 200, payload: orders };
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }

@@ -61,6 +61,15 @@ router.put("/api/user", authMiddleware, (_req, res) => {
     });
 });
 
+router.post("/api/user/handleGoogleLogin", (_req, res) => {
+  const controller = new UserController();
+  const { email, name, picture } = _req.body;
+  console.log(email, name, picture);
+  controller.handleGoogleLogin({ email, name, picture }).then((response) => {
+    res.status(response.code).send(response);
+  });
+});
+
 router.put(
   "/api/user/profilePicture/:email",
   authMiddleware,
@@ -236,6 +245,18 @@ router.get("/api/order/:email", (_req, res) => {
   const controller = new OrderController();
   const email = _req.params.email;
   controller.getOrders(email).then((response) => {
+    if (response) {
+      res.status(200).send(response);
+    } else {
+      res.status(404);
+    }
+  });
+});
+
+router.get("/api/order/supplier/:cuit", (_req, res) => {
+  const controller = new OrderController();
+  const cuit = _req.params.cuit;
+  controller.getOrdersSupplierCuit(cuit).then((response) => {
     if (response) {
       res.status(200).send(response);
     } else {

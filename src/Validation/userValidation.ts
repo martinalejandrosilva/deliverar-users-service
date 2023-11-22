@@ -65,18 +65,8 @@ exports.validateSupplierRegister = [
 ];
 
 exports.validateSupplierUpdate = [
-  body("cuit")
-    .exists()
-    .isLength({ min: 13, max: 13 })
-    .withMessage("CUIT must be 11 digits long")
-    .matches(/^\d{2}-\d{8}-\d$/)
-    .withMessage("CUIT must be in the format XX-XXXXXXXX-X")
-    .bail()
-    .custom((value: string) => {
-      const numericCUIT = value.replace(/-/g, "");
-      return true;
-    }),
   body("password")
+    .optional({ nullable: true })
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters")
     .withMessage("Password is required")

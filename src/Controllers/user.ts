@@ -10,6 +10,7 @@ import {
   UploadedFile,
 } from "tsoa";
 import { IUserProfileUpdate, IUserRegister } from "../Models/types";
+import { googleUser } from "../Services/UserService";
 const UserService = require("../Services/UserService");
 const config = require("config");
 const jwt = require("jsonwebtoken");
@@ -149,5 +150,36 @@ export default class UserController {
   public async delete(@Path("email") email: string): Promise<IUserResponse> {
     const user = await UserService.DeleteUser(email);
     return { code: user.code };
+  }
+
+  /**
+   * Get User Data.
+   * @param email The user email.
+   * @param name The user name.
+   * @param picture The user picture.
+   */
+  @Post("/handleGoogleLogin")
+  public async handleGoogleLogin(
+    @Body() { email, name, picture }: googleUser
+  ): Promise<IUserResponse> {
+    const user = await UserService.handleGoogleSignIn({ email, name, picture });
+    if (user) {
+      const token = await new Promise<string | undefined>((resolve, reject) => {
+        jwt.sign(
+          user,
+          config.get("jwtSecret"),
+          { expiresIn: 3600 },
+          (err: any, token: string | undefined) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(token);
+            }
+          }
+        );
+      });
+      user.payload.token = token;
+    }
+    return { code: user.code, payload: user.payload };
   }
 }

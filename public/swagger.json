@@ -139,6 +139,23 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"googleUser": {
+				"properties": {
+					"picture": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object"
+			},
 			"IUserAuthenticated": {
 				"properties": {
 					"email": {
@@ -456,6 +473,9 @@
 					"marketplace": {
 						"type": "string"
 					},
+					"cuit": {
+						"type": "string"
+					},
 					"purchaseId": {
 						"type": "string"
 					},
@@ -482,6 +502,7 @@
 					"productPrice",
 					"productQuantity",
 					"marketplace",
+					"cuit",
 					"purchaseId",
 					"userEmail",
 					"userDni"
@@ -689,6 +710,39 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/user/handleGoogleLogin": {
+			"post": {
+				"operationId": "HandleGoogleLogin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUserResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User Data.",
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/googleUser"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/auth/login": {
@@ -1062,7 +1116,7 @@
 						}
 					}
 				},
-				"description": "Get all orders for a user.",
+				"description": "Get all orders for given user.",
 				"tags": [
 					"Order"
 				],
@@ -1072,6 +1126,42 @@
 						"description": "The user email.",
 						"in": "path",
 						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/order/supplier/{cuit}": {
+			"get": {
+				"operationId": "GetOrdersSupplierCuit",
+				"responses": {
+					"200": {
+						"description": "The supplier order.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IOrder"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all orders for given Supplier.",
+				"tags": [
+					"Order"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The supplier CUIT.",
+						"in": "path",
+						"name": "cuit",
 						"required": true,
 						"schema": {
 							"type": "string"

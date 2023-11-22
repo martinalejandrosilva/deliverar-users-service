@@ -1,5 +1,13 @@
 import Supplier from "../Models/supplier.model";
-import { IEmployee, IEvent, IUserProfileUpdate, IUserRegister, UserEmployeePasswordChange, createUserEmployeePayload, createUserEventPayload } from "../Models/types";
+import {
+  IEmployee,
+  IEvent,
+  IUserProfileUpdate,
+  IUserRegister,
+  UserEmployeePasswordChange,
+  createUserEmployeePayload,
+  createUserEventPayload,
+} from "../Models/types";
 import User from "../Models/user.model";
 const bcrypt = require("bcrypt");
 import cloudinaryService from "./CloudinaryService";
@@ -42,7 +50,7 @@ exports.Register = async ({
       document: NewUser.dni,
       address: NewUser.address ? NewUser.address : "",
     };
-    
+
     //Guild 2 Use Case
     eda.publishMessage<createUserEventPayload>(
       "/app/send/usuarios",
@@ -51,7 +59,7 @@ exports.Register = async ({
     );
 
     //Guild 5.
-    //User/Supplier Count. 
+    //User/Supplier Count.
 
     const userCount = await User.countDocuments();
     const supplierCount = await Supplier.countDocuments();
@@ -60,8 +68,12 @@ exports.Register = async ({
       userCount,
       supplierCount,
     };
-    eda.publishMessage<UserSupplierCount>("/app/send/usuarios", "user_supplier_count", userSupplierCount);
-    //END Guild 5.  
+    eda.publishMessage<UserSupplierCount>(
+      "/app/send/usuarios",
+      "user_supplier_count",
+      userSupplierCount
+    );
+    //END Guild 5.
 
     return {
       code: 200,
@@ -137,8 +149,8 @@ exports.UpdateUser = async ({
       { new: true }
     ).lean();
 
-    if(password && password.trim() !== "" && user?.isEmployee){
-      const eventPayload : IEvent<UserEmployeePasswordChange> = {
+    if (password && password.trim() !== "" && user?.isEmployee) {
+      const eventPayload: IEvent<UserEmployeePasswordChange> = {
         sender: "usuarios",
         created_at: Date.now(),
         event_name: "user_employee_password_change",
@@ -147,10 +159,14 @@ exports.UpdateUser = async ({
           newPassword: password,
           email: user?.email,
           dni: user?.dni,
-        }
-      }
+        },
+      };
       const eda = EDA.getInstance();
-      eda.publishMessage("/app/send/usuarios", "user_employee_password_change",eventPayload )
+      eda.publishMessage(
+        "/app/send/usuarios",
+        "user_employee_password_change",
+        eventPayload
+      );
     }
 
     return {
@@ -228,10 +244,10 @@ export const GetUserCount = async () => {
   } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }
-}
+};
 
-exports.CreateUserFromEmployee = async (employee : IEmployee) => {
-  try{
+exports.CreateUserFromEmployee = async (employee: IEmployee) => {
+  try {
     const isCeo = employee.grupo === "509";
 
     const NewUser = new User({
@@ -244,16 +260,16 @@ exports.CreateUserFromEmployee = async (employee : IEmployee) => {
       password: employee.password,
       isProvider: false,
       isEmployee: true,
-      group : employee.grupo,
-      discount : isCeo? 60 : 30,
-      vip : isCeo? true : false,
+      group: employee.grupo,
+      discount: isCeo ? 60 : 30,
+      vip: isCeo ? true : false,
     });
-    
+
     const salt = await bcrypt.genSalt(10);
     NewUser.password = await bcrypt.hash(NewUser.password, salt);
-    await NewUser.save(); 
+    await NewUser.save();
 
-    const eventPayload : IEvent<createUserEmployeePayload> = {
+    const eventPayload: IEvent<createUserEmployeePayload> = {
       sender: "usuarios",
       created_at: Date.now(),
       event_name: "new_user_employee_create",
@@ -265,17 +281,89 @@ exports.CreateUserFromEmployee = async (employee : IEmployee) => {
         phone: NewUser.phone ? NewUser.phone : "",
         createdOn: NewUser.createdOn,
         password: NewUser.password,
-        discount : NewUser.discount ? NewUser.discount : 0,
-        vip : NewUser.vip ? NewUser.vip : false,
-      }
-    }
+        discount: NewUser.discount ? NewUser.discount : 0,
+        vip: NewUser.vip ? NewUser.vip : false,
+      },
+    };
 
     const eda = EDA.getInstance();
-    eda.publishMessage("/app/send/usuarios", "new_user_employee_create", NewUser);
+    eda.publishMessage(
+      "/app/send/usuarios",
+      "new_user_employee_create",
+      NewUser
+    );
 
     return { code: 200, message: "User created" };
-  }catch(error){
+  } catch (error) {
     return { code: 500, message: "Internal Server Error" };
   }
-}
+};
 
+exports.handleGoogleSignIn = async (props: googleUser) => {
+  const { email, name, picture } = props;
+
+  let user = await User.findOne({ email }).lean();
+
+  if (user) {
+    return {
+      code: 200,
+      payload: {
+        name: user.name,
+        email: user.email,
+        dni: user.dni,
+        address: user.address,
+        phone: user.phone,
+        createdOn: user.createdOn,
+        isProvider: user.isProvider,
+        isEmployee: user.isEmployee,
+        group: user.group,
+        discount: user.discount,
+        vip: user.vip,
+        profilePicture: user.profilePicture,
+      },
+    };
+  }
+
+  //If not, create user.
+  const NewUser = new User({
+    name,
+    email,
+    dni: "",
+    address: "",
+    phone: "",
+    createdOn: Date.now(),
+    password: "",
+    isProvider: false,
+    isEmployee: false,
+    group: "",
+    discount: 0,
+    vip: false,
+    profilePicture: picture,
+  });
+
+  await NewUser.save();
+
+  return {
+    code: 200,
+    payload: {
+      name: NewUser.name,
+      email: NewUser.email,
+      dni: NewUser.dni,
+      address: NewUser.address,
+      phone: NewUser.phone,
+      createdOn: NewUser.createdOn,
+      isProvider: NewUser.isProvider,
+      isEmployee: NewUser.isEmployee,
+      group: NewUser.group,
+      discount: NewUser.discount,
+      vip: NewUser.vip,
+      profilePicture: NewUser.profilePicture,
+    },
+  };
+};
+
+export type googleUser = {
+  email: string;
+  name?: string;
+  picture?: string;
+};

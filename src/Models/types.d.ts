@@ -179,6 +179,7 @@ export interface IOrder {
   productPrice: number;
   productQuantity: number;
   marketplace: string;
+  cuit: string;
   purchaseId: string;
   userEmail: string;
   userDni: string;
@@ -221,6 +222,7 @@ export type OrderUpdate = {
   productPrice?: number;
   productQuantity?: number;
   marketplace?: string;
+  cuit?: string;
   purchaseId: string;
   userEmail?: string;
   userDni?: string;

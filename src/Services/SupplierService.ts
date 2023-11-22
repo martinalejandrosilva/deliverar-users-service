@@ -83,19 +83,18 @@ exports.Register = async ({
       coverPhoto: NewSupplier.coverPhoto,
       logo: NewSupplier.logo,
       password: password,
-
     };
 
     eda.publishMessage<createSupplierEventPayload>(
       "/app/send/usuarios",
       "new_company_create",
       newSupplierEvent
-      );
+    );
 
-    //END Guild 1 
+    //END Guild 1
 
     //Guild 5.
-    //User/Supplier Count. 
+    //User/Supplier Count.
 
     const userCount = await User.countDocuments();
     const supplierCount = await Supplier.countDocuments();
@@ -104,8 +103,12 @@ exports.Register = async ({
       userCount,
       supplierCount,
     };
-    eda.publishMessage<UserSupplierCount>("/app/send/usuarios", "user_supplier_count", userSupplierCount);
-    //END Guild 5.  
+    eda.publishMessage<UserSupplierCount>(
+      "/app/send/usuarios",
+      "user_supplier_count",
+      userSupplierCount
+    );
+    //END Guild 5.
 
     return {
       code: 200,
@@ -121,7 +124,7 @@ exports.Register = async ({
         primaryColor: NewSupplier.primaryColor,
         secondaryColor: NewSupplier.secondaryColor,
         isProvider: NewSupplier.isProvider,
-        createdOn: NewSupplier.createdOn,    
+        createdOn: NewSupplier.createdOn,
       },
     };
   } catch (error) {
@@ -131,62 +134,100 @@ exports.Register = async ({
 };
 
 exports.UpdateSupplier = async ({
-  email,
+  cuit,
   name,
   businessName,
-  cuit,
   domain,
   address,
   phone,
   category,
+  email,
   primaryColor,
   secondaryColor,
   password,
 }: ISupplier) => {
   try {
-    let supplier = await Supplier.findOne({ cuit: cuit }).lean();
+    let supplier = await Supplier.findOne({ cuit });
 
     if (!supplier) {
-      return { code: 400, message: "Supplier does not exists" };
+      return { code: 400, message: "Supplier does not exist" };
     }
 
-    const salt = await bcrypt.genSalt(10);
-    supplier.password = await bcrypt.hash(password, salt);
+    const updateFields: any = {};
 
-    await Supplier.updateOne(
-      { cuit: cuit },
-      {
-        name,
-        businessName,
-        domain,
-        address,
-        phone,
-        category,
-        email,
-        primaryColor,
-        secondaryColor,
-        password: supplier.password,
-      }
-    );
+    if (name && name.trim() !== "") {
+      updateFields.name = name;
+    }
+
+    if (businessName && businessName.trim() !== "") {
+      updateFields.businessName = businessName;
+    }
+
+    if (domain && domain.trim() !== "") {
+      updateFields.domain = domain;
+    }
+
+    if (address && address.trim() !== "") {
+      updateFields.address = address;
+    }
+
+    if (phone && phone.trim() !== "") {
+      updateFields.phone = phone;
+    }
+
+    if (category && category.trim() !== "") {
+      updateFields.category = category;
+    }
+
+    if (email && email.trim() !== "") {
+      updateFields.email = email;
+    }
+
+    if (primaryColor && primaryColor.trim() !== "") {
+      updateFields.primaryColor = primaryColor;
+    }
+
+    if (secondaryColor && secondaryColor.trim() !== "") {
+      updateFields.secondaryColor = secondaryColor;
+    }
+
+    // Check if password is provided and is not an empty string
+    if (password && password.trim() !== "") {
+      const salt = await bcrypt.genSalt(10);
+      updateFields.password = await bcrypt.hash(password, salt);
+    }
+
+    // If there are no fields to update, you can immediately return
+    if (Object.keys(updateFields).length === 0) {
+      return {
+        code: 400,
+        message: "No valid fields provided for update.",
+      };
+    }
+
+    await Supplier.updateOne({ cuit }, { $set: updateFields });
+
+    supplier = await Supplier.findOne({ cuit }).lean();
 
     return {
       code: 200,
       payload: {
-        name,
-        businessName,
+        name: supplier?.name,
+        businessName: supplier?.businessName,
         cuit,
-        domain,
-        address,
-        phone,
-        category,
-        email,
-        primaryColor,
-        secondaryColor,
+        domain: supplier?.domain,
+        address: supplier?.address,
+        phone: supplier?.phone,
+        category: supplier?.category,
+        email: supplier?.email,
+        primaryColor: supplier?.primaryColor,
+        secondaryColor: supplier?.secondaryColor,
         isProvider: true,
-        createdOn: supplier.createdOn,
+        createdOn: supplier?.createdOn,
       },
     };
   } catch (error) {
+    console.log(error);
     return { code: 500, message: "Internal Server Error" };
   }
 };
